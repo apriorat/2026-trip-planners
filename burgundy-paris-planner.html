@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Burgundy-Paris · June 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── PASTE YOUR ANTHROPIC API KEY HERE ── */
+/* See the JS section at the bottom for where to insert it */
+
+:root {
+  --cream: #F7F3EE;
+  --cream-dark: #EDE8E1;
+  --parchment: #E8E1D6;
+  --wine: #6B2737;
+  --wine-light: #8B3347;
+  --wine-pale: #F2E8EA;
+  --gold: #B5894A;
+  --gold-light: #D4A96A;
+  --ink: #1C1A18;
+  --ink-mid: #3D3830;
+  --ink-soft: #6B6459;
+  --ink-ghost: #9E9690;
+  --border: rgba(107,95,82,0.18);
+  --border-strong: rgba(107,95,82,0.32);
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--wine);
+  padding: 20px 32px 0;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: rgba(181,137,74,0.12);
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.header-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.trip-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: 4px;
+}
+.trip-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 300;
+  color: #FFF;
+  letter-spacing: .01em;
+  line-height: 1;
+}
+.trip-title em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+.trip-dates {
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 6px;
+  letter-spacing: .04em;
+}
+.header-badge {
+  text-align: right;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.7;
+}
+.header-badge span {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-style: italic;
+  color: rgba(255,255,255,0.7);
+}
+
+/* ── TABS ── */
+.tabs-bar {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  padding: 9px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+  background: transparent;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  letter-spacing: .03em;
+  transition: all .18s;
+  white-space: nowrap;
+  position: relative;
+  bottom: 0;
+}
+.tab-btn:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.06); }
+.tab-btn.active {
+  color: var(--ink);
+  background: var(--cream);
+  font-weight: 500;
+}
+.tab-add {
+  padding: 8px 14px;
+  font-size: 18px;
+  color: rgba(255,255,255,0.35);
+  background: transparent;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  transition: all .18s;
+  line-height: 1;
+  bottom: 0;
+  position: relative;
+}
+.tab-add:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.06); }
+
+/* ── MAIN CONTENT ── */
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 32px 60px;
+}
+.panel { display: none; }
+.panel.active { display: block; }
+.panel-row { display: flex; gap: 20px; flex-wrap: wrap; }
+
+/* ── SECTION LABELS ── */
+.section-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-ghost);
+  margin-bottom: 10px;
+}
+.panel-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--ink);
+  margin-bottom: 18px;
+  letter-spacing: .01em;
+}
+
+/* ── EDITABLE HINT ── */
+[contenteditable]:hover { outline: 1px dashed rgba(107,95,82,0.3); outline-offset: 2px; border-radius: 3px; cursor: text; }
+[contenteditable]:focus { outline: 1px solid var(--gold); outline-offset: 2px; border-radius: 3px; background: rgba(181,137,74,0.06); }
+
+/* ── SCHEDULE ── */
+.schedule-hint {
+  font-size: 11px;
+  color: var(--ink-ghost);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.schedule-hint::before {
+  content: '';
+  display: inline-block;
+  width: 14px; height: 1px;
+  background: var(--gold);
+}
+.sched-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+table.sched {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  min-width: 820px;
+  background: #FFF;
+}
+table.sched th {
+  background: var(--cream-dark);
+  padding: 0;
+  border: 1px solid var(--border);
+  font-weight: 500;
+}
+.th-wrap { padding: 8px 10px; display: block; }
+.day-name { font-size: 11px; font-weight: 500; color: var(--ink-mid); display: block; }
+.day-sub { font-size: 10px; color: var(--ink-ghost); display: block; margin-top: 2px; font-style: italic; }
+th.col-label { min-width: 88px; text-align: left; }
+th.col-day { min-width: 100px; text-align: center; }
+table.sched td {
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  vertical-align: top;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink);
+  min-height: 36px;
+}
+td.row-label {
+  background: var(--cream-dark);
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: .04em;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  padding: 0;
+}
+.rl-inner { display: block; padding: 8px 10px; }
+td.cell { outline: none; }
+td.cell:empty::before { content: attr(data-ph); color: var(--ink-ghost); font-style: italic; font-size: 10px; }
+td.cell:focus { background: rgba(181,137,74,0.05); outline: none; }
+.row-morning td:not(.row-label) { background: rgba(234,243,222,0.15); }
+.row-lunch td:not(.row-label) { background: rgba(250,238,218,0.2); }
+.row-afternoon td:not(.row-label) { background: rgba(230,241,251,0.15); }
+.row-evening td:not(.row-label) { background: rgba(238,237,254,0.15); }
+.row-dinner td:not(.row-label) { background: rgba(107,39,55,0.04); }
+.row-transport td:not(.row-label) { background: rgba(181,137,74,0.06); }
+.row-lodging td:not(.row-label) { background: rgba(29,158,117,0.05); }
+.row-notes td:not(.row-label) { background: rgba(107,95,82,0.04); }
+.cn { font-size: 10px; color: var(--ink-ghost); display: block; margin-top: 2px; font-style: italic; }
+
+/* ── TASKS ── */
+.tasks-col { max-width: 600px; }
+.task-group {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 14px;
+  background: #FFF;
+}
+.tg-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--cream-dark);
+  border-bottom: 1px solid var(--border);
+}
+.tg-name {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.tg-name:focus { background: rgba(181,137,74,0.08); border-radius: 4px; padding: 1px 4px; }
+.tg-del { background: none; border: none; cursor: pointer; color: var(--ink-ghost); font-size: 15px; line-height: 1; padding: 0 2px; }
+.tg-del:hover { color: #C0392B; }
+.task-list { list-style: none; }
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  background: #FFF;
+  transition: background .12s;
+}
+.task-item:last-child { border-bottom: none; }
+.task-item:hover { background: var(--cream); }
+.move-btns { display: flex; flex-direction: column; gap: 1px; flex-shrink: 0; }
+.move-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--ink-ghost); font-size: 9px; line-height: 1;
+  padding: 1px 3px; border-radius: 3px;
+}
+.move-btn:hover { background: var(--parchment); color: var(--ink); }
+.task-cb { width: 15px; height: 15px; accent-color: var(--wine); cursor: pointer; flex-shrink: 0; }
+.task-label {
+  flex: 1; font-size: 12px; color: var(--ink);
+  background: transparent; border: none; outline: none;
+  font-family: 'DM Sans', sans-serif;
+  cursor: text;
+}
+.task-label:focus { background: rgba(181,137,74,0.06); border-radius: 3px; padding: 1px 4px; }
+.task-label.done { text-decoration: line-through; color: var(--ink-ghost); }
+.task-assign {
+  font-size: 11px; padding: 2px 6px;
+  border: 1px solid var(--border-strong); border-radius: 5px;
+  background: var(--cream); color: var(--ink-soft);
+  cursor: pointer; outline: none; font-family: 'DM Sans', sans-serif;
+}
+.task-del { background: none; border: none; cursor: pointer; color: var(--ink-ghost); font-size: 14px; line-height: 1; padding: 0 2px; flex-shrink: 0; }
+.task-del:hover { color: #C0392B; }
+.add-task-row {
+  display: flex; gap: 6px; padding: 8px 14px;
+  background: var(--cream-dark);
+  border-top: 1px solid var(--border);
+}
+.add-task-row input {
+  flex: 1; font-size: 11px; padding: 5px 9px;
+  border: 1px solid var(--border-strong); border-radius: 5px;
+  background: #FFF; color: var(--ink); outline: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.add-task-row input:focus { border-color: var(--gold); }
+.add-task-row select {
+  font-size: 11px; padding: 5px 7px;
+  border: 1px solid var(--border-strong); border-radius: 5px;
+  background: #FFF; color: var(--ink); outline: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+.add-group-row { display: flex; gap: 10px; margin-top: 6px; }
+.add-group-row input {
+  flex: 1; font-size: 12px; padding: 7px 11px;
+  border: 1px solid var(--border-strong); border-radius: 6px;
+  background: #FFF; color: var(--ink); outline: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.add-group-row input:focus { border-color: var(--gold); }
+
+/* ── EXPENSES ── */
+.exp-wrap { border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; background: #FFF; }
+table.exp { width: 100%; border-collapse: collapse; font-size: 12px; }
+table.exp th {
+  background: var(--cream-dark); padding: 9px 12px;
+  text-align: left; font-weight: 500; font-size: 10px;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-soft); border: 1px solid var(--border);
+  white-space: nowrap;
+}
+table.exp td { padding: 7px 10px; border: 1px solid var(--border); font-size: 12px; vertical-align: middle; }
+table.exp tr:nth-child(even) td { background: rgba(247,243,238,0.5); }
+table.exp input, table.exp select {
+  font-size: 12px; padding: 4px 7px;
+  border: 1px solid var(--border); border-radius: 5px;
+  background: #FFF; color: var(--ink); outline: none; width: 100%;
+  font-family: 'DM Sans', sans-serif;
+}
+table.exp input:focus, table.exp select:focus { border-color: var(--gold); }
+.exp-add-row td { background: var(--cream-dark) !important; }
+
+.settle-section { margin-top: 24px; }
+.settle-box {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #FFF;
+}
+.settle-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: var(--cream-dark);
+  border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
+}
+.settle-head-title { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 400; color: var(--ink); }
+.settle-curr-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; border-bottom: 1px solid var(--border);
+  background: #FFF; flex-wrap: wrap;
+}
+.settle-curr-row label { font-size: 11px; color: var(--ink-soft); }
+.settle-curr-row select {
+  font-size: 12px; padding: 4px 8px;
+  border: 1px solid var(--border-strong); border-radius: 5px;
+  background: var(--cream); color: var(--ink); outline: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+.rate-inputs { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.rate-field { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--ink-soft); }
+.rate-field input {
+  width: 68px; font-size: 11px; padding: 3px 6px;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: #FFF; color: var(--ink); outline: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.breakdown { display: flex; gap: 12px; flex-wrap: wrap; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.person-card {
+  flex: 1; min-width: 150px;
+  border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+.pc-head {
+  padding: 8px 12px; background: var(--wine);
+  font-size: 12px; font-weight: 500; color: #FFF;
+}
+.pc-body { padding: 10px 12px; }
+.pc-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
+.pc-row:last-child { margin-bottom: 0; }
+.pc-label { color: var(--ink-soft); }
+.pc-val { font-weight: 500; color: var(--ink); }
+.settle-result { padding: 14px 16px; }
+.settle-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--cream); margin-bottom: 8px;
+}
+.settle-row:last-child { margin-bottom: 0; }
+.s-from { font-size: 13px; font-weight: 500; color: var(--ink); min-width: 70px; }
+.s-arrow { color: var(--ink-ghost); font-size: 14px; }
+.s-to { font-size: 13px; font-weight: 500; color: var(--ink); min-width: 70px; }
+.s-pill {
+  font-size: 12px; font-weight: 500; padding: 4px 14px;
+  border-radius: 20px; margin-left: auto;
+}
+.pill-eur { background: rgba(29,158,117,0.12); color: #0F6E56; }
+.pill-usd { background: rgba(55,138,221,0.12); color: #185FA5; }
+.pill-ntd { background: rgba(127,119,221,0.12); color: #3C3489; }
+.no-settle { font-size: 12px; color: var(--ink-ghost); font-style: italic; padding: 6px 0; }
+
+/* ── VISION BOARD ── */
+.vb-controls {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap; margin-bottom: 16px;
+}
+.tag-pill {
+  padding: 4px 12px; border-radius: 20px;
+  border: 1px solid var(--border-strong);
+  background: #FFF; font-size: 11px;
+  color: var(--ink-soft); cursor: pointer; transition: all .14s;
+}
+.tag-pill.active, .tag-pill:hover {
+  background: var(--wine); color: #FFF; border-color: var(--wine);
+}
+.add-pin-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.add-pin-row input {
+  flex: 1; min-width: 120px; font-size: 12px; padding: 7px 11px;
+  border: 1px solid var(--border-strong); border-radius: 6px;
+  background: #FFF; color: var(--ink); outline: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.add-pin-row input:focus { border-color: var(--gold); }
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 14px;
+}
+.pin-card {
+  border-radius: var(--radius); overflow: hidden;
+  border: 1px solid var(--border); background: #FFF;
+  cursor: pointer; transition: transform .16s, box-shadow .16s;
+}
+.pin-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(28,26,24,0.1); }
+.pin-emoji { width: 100%; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+.pin-body { padding: 10px 12px; }
+.pin-title { font-size: 12px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+.pin-loc { font-size: 10px; color: var(--ink-ghost); margin-bottom: 3px; }
+.pin-note { font-size: 10px; color: var(--ink-soft); line-height: 1.45; margin-bottom: 3px; }
+.pin-tag {
+  font-size: 9px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-ghost); margin-bottom: 3px;
+}
+.pin-link { font-size: 10px; color: var(--gold); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; display: block; text-decoration: none; }
+.pin-link:hover { color: var(--wine); }
+
+/* ── MAPS ── */
+.map-layout { display: flex; gap: 16px; flex-wrap: wrap; }
+.map-embed { flex: 1; min-width: 260px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.map-embed iframe { display: block; width: 100%; height: 500px; border: none; }
+.map-sidebar { width: 210px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; }
+.map-note {
+  font-size: 11px; color: var(--ink-soft);
+  background: var(--cream-dark); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px; line-height: 1.6;
+}
+.map-note strong { display: block; color: var(--ink-mid); font-size: 11px; margin-bottom: 4px; }
+.map-open-link {
+  display: block; text-align: center; font-size: 11px;
+  color: var(--wine); padding: 8px; border: 1px solid var(--border-strong);
+  border-radius: 7px; text-decoration: none;
+  background: var(--cream-dark); transition: background .14s;
+}
+.map-open-link:hover { background: var(--wine-pale); }
+.pin-list-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: #FFF; }
+.map-pin-item {
+  display: flex; align-items: flex-start; gap: 7px;
+  padding: 7px 10px; border-bottom: 1px solid var(--border);
+}
+.map-pin-item:last-child { border-bottom: none; }
+.mp-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.mp-sight { background: #378ADD; } .mp-wine { background: var(--wine); }
+.mp-food { background: #D85A30; } .mp-hotel { background: #1D9E75; } .mp-other { background: #7F77DD; }
+.mp-text { flex: 1; }
+.mp-name { font-size: 11px; font-weight: 500; color: var(--ink); }
+.mp-sub { font-size: 10px; color: var(--ink-ghost); margin-top: 1px; }
+.mp-del { background: none; border: none; cursor: pointer; color: var(--ink-ghost); font-size: 13px; line-height: 1; padding: 0 2px; }
+.mp-del:hover { color: #C0392B; }
+.map-add-form {
+  border: 1px solid var(--border); border-radius: 8px; padding: 10px;
+  background: var(--cream-dark); display: flex; flex-direction: column; gap: 6px;
+}
+.map-add-form input, .map-add-form select {
+  font-size: 11px; padding: 5px 8px;
+  border: 1px solid var(--border-strong); border-radius: 5px;
+  background: #FFF; color: var(--ink); outline: none; width: 100%;
+  font-family: 'DM Sans', sans-serif;
+}
+.map-add-form input:focus { border-color: var(--gold); }
+.map-legend { display: flex; flex-direction: column; gap: 4px; }
+.map-legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--ink-soft); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px; font-size: 12px; font-weight: 500;
+  border-radius: var(--radius-sm); border: 1px solid var(--border-strong);
+  background: #FFF; color: var(--ink-mid); cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: all .14s;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--cream-dark); }
+.btn-wine {
+  background: var(--wine); color: #FFF; border-color: var(--wine);
+}
+.btn-wine:hover { background: var(--wine-light); }
+.del-btn { background: none; border: none; cursor: pointer; color: var(--ink-ghost); font-size: 14px; line-height: 1; padding: 0 4px; }
+.del-btn:hover { color: #C0392B; }
+
+/* ── AI COMMAND BAR ── */
+.ai-bar {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  width: min(680px, calc(100vw - 48px));
+  background: var(--wine); border-radius: 14px;
+  padding: 10px 14px; display: flex; gap: 10px; align-items: center;
+  box-shadow: 0 8px 32px rgba(107,39,55,0.35);
+  z-index: 100;
+}
+.ai-icon { font-size: 16px; flex-shrink: 0; color: var(--gold-light); }
+.ai-input {
+  flex: 1; background: transparent; border: none; outline: none;
+  font-size: 13px; color: #FFF; font-family: 'DM Sans', sans-serif;
+}
+.ai-input::placeholder { color: rgba(255,255,255,0.45); }
+.ai-send {
+  background: var(--gold); border: none; border-radius: 8px;
+  padding: 6px 12px; font-size: 12px; font-weight: 500;
+  color: var(--ink); cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: background .14s; flex-shrink: 0;
+}
+.ai-send:hover { background: var(--gold-light); }
+.ai-response {
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+  width: min(680px, calc(100vw - 48px));
+  background: #FFF; border: 1px solid var(--border-strong);
+  border-radius: 12px; padding: 14px 16px;
+  font-size: 12px; color: var(--ink); line-height: 1.6;
+  box-shadow: 0 4px 20px rgba(28,26,24,0.12);
+  z-index: 99; display: none;
+}
+.ai-response.show { display: block; }
+.ai-close {
+  float: right; background: none; border: none; cursor: pointer;
+  color: var(--ink-ghost); font-size: 14px; line-height: 1;
+}
+
+/* ── FOOTER PADDING for fixed bar ── */
+body { padding-bottom: 100px; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div>
+        <div class="trip-eyebrow">Travel planner · 2026</div>
+        <div class="trip-title">Burgundy<em>-</em>Paris</div>
+        <div class="trip-dates">June 8 – 14 &nbsp;·&nbsp; CDG &nbsp;·&nbsp; Cynthia &amp; Grace</div>
+      </div>
+      <div class="header-badge">
+        <span>🇫🇷</span>
+        Côte d'Or · Paris
+      </div>
+    </div>
+    <div class="tabs-bar" id="tabs-bar">
+      <button class="tab-btn active" onclick="showTab('schedule',this)">📅 Schedule</button>
+      <button class="tab-btn" onclick="showTab('tasks',this)">✅ Tasks</button>
+      <button class="tab-btn" onclick="showTab('expenses',this)">💶 Expenses</button>
+      <button class="tab-btn" onclick="showTab('vision',this)">📌 Vision Board</button>
+      <button class="tab-btn" onclick="showTab('paris',this)">🗼 Paris Map</button>
+      <button class="tab-btn" onclick="showTab('burgundy',this)">🍇 Burgundy Map</button>
+      <button class="tab-add" onclick="addTab()" title="Add tab">＋</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- ═══ SCHEDULE ═══ -->
+  <div class="panel active" id="panel-schedule">
+    <div class="schedule-hint">Click any header, row label, or cell to edit</div>
+    <div class="sched-wrap">
+      <table class="sched">
+        <thead>
+          <tr>
+            <th class="col-label"><div class="th-wrap"></div></th>
+            <th class="col-day"><div class="th-wrap"><span class="day-name" contenteditable>Mon · Jun 8</span><span class="day-sub" contenteditable>Paris / CDG</span></div></th>
+            <th class="col-day"><div class="th-wrap"><span class="day-name" contenteditable>Tue · Jun 9</span><span class="day-sub" contenteditable>Paris → Burgundy</span></div></th>
+            <th class="col-day"><div class="th-wrap"><span class="day-name" contenteditable>Wed · Jun 10</span><span class="day-sub" contenteditable>Beaune area</span></div></th>
+            <th class="col-day"><div class="th-wrap"><span class="day-name" contenteditable>Thu · Jun 11</span><span class="day-sub" contenteditable>Côte de Nuits</span></div></th>
+            <th class="col-day"><div class="th-wrap"><span class="day-name" contenteditable>Fri · Jun 12</span><span class="day-sub" contenteditable>Dijon area</span></div></th>
+            <th class="col-day"><div class="th-wrap"><span class="day-name" contenteditable>Sat · Jun 13</span><span class="day-sub" contenteditable>Dijon → Paris</span></div></th>
+            <th class="col-day"><div class="th-wrap"><span class="day-name" contenteditable>Sun · Jun 14</span><span class="day-sub" contenteditable>Paris / CDG</span></div></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-morning"><td class="row-label"><span class="rl-inner" contenteditable>🌅 Morning</span></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td></tr>
+          <tr class="row-lunch"><td class="row-label"><span class="rl-inner" contenteditable>🥗 Lunch</span></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td></tr>
+          <tr class="row-afternoon"><td class="row-label"><span class="rl-inner" contenteditable>☀️ Afternoon</span></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td></tr>
+          <tr class="row-evening"><td class="row-label"><span class="rl-inner" contenteditable>🌆 Evening</span></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td></tr>
+          <tr class="row-dinner"><td class="row-label"><span class="rl-inner" contenteditable>🍷 Dinner</span></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td></tr>
+          <tr class="row-transport">
+            <td class="row-label"><span class="rl-inner" contenteditable>🚄 Transport</span></td>
+            <td class="cell" contenteditable data-ph="Add…"></td>
+            <td class="cell" contenteditable>TGV Paris-Gare de Lyon → Dijon<span class="cn">~1h35 · book on SNCF Connect</span></td>
+            <td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td>
+          </tr>
+          <tr class="row-lodging"><td class="row-label"><span class="rl-inner" contenteditable>🏨 Lodging</span></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td></tr>
+          <tr class="row-notes"><td class="row-label"><span class="rl-inner" contenteditable>📋 Notes</span></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td><td class="cell" contenteditable data-ph="Add…"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ TASKS ═══ -->
+  <div class="panel" id="panel-tasks">
+    <div class="tasks-col" id="tasks-wrap"></div>
+    <div class="add-group-row" style="max-width:600px;margin-top:4px;">
+      <input type="text" id="new-group-name" placeholder="New section name…" onkeydown="if(event.key==='Enter')addGroup()">
+      <button class="btn" onclick="addGroup()">+ Add section</button>
+    </div>
+  </div>
+
+  <!-- ═══ EXPENSES ═══ -->
+  <div class="panel" id="panel-expenses">
+    <div class="section-label" style="margin-bottom:12px;">Expense log</div>
+    <div class="exp-wrap">
+      <table class="exp">
+        <thead><tr>
+          <th style="min-width:190px">Item</th>
+          <th style="min-width:85px">Amount</th>
+          <th style="min-width:95px">Currency</th>
+          <th style="min-width:105px">Paid by</th>
+          <th style="width:32px"></th>
+        </tr></thead>
+        <tbody id="exp-body">
+          <tr><td><input type="text" value="TGV tickets Paris → Dijon"></td><td><input type="number" value="148" style="text-align:right" oninput="recalc()"></td><td><select onchange="recalc()"><option>€ EUR</option><option>$ USD</option><option>NTD</option></select></td><td><select onchange="recalc()"><option value="">—</option><option selected>Cynthia</option><option>Grace</option></select></td><td><button class="del-btn" onclick="delExp(this)">×</button></td></tr>
+          <tr><td><input type="text" value="Château de Meursault tasting"></td><td><input type="number" value="60" style="text-align:right" oninput="recalc()"></td><td><select onchange="recalc()"><option>€ EUR</option><option>$ USD</option><option>NTD</option></select></td><td><select onchange="recalc()"><option value="">—</option><option>Cynthia</option><option selected>Grace</option></select></td><td><button class="del-btn" onclick="delExp(this)">×</button></td></tr>
+          <tr><td><input type="text" value="Domaine Rossignol-Trapet visit"></td><td><input type="number" value="90" style="text-align:right" oninput="recalc()"></td><td><select onchange="recalc()"><option>€ EUR</option><option>$ USD</option><option>NTD</option></select></td><td><select onchange="recalc()"><option value="">—</option><option selected>Cynthia</option><option>Grace</option></select></td><td><button class="del-btn" onclick="delExp(this)">×</button></td></tr>
+          <tr><td><input type="text" value="Dinner — Chez Guy"></td><td><input type="number" value="110" style="text-align:right" oninput="recalc()"></td><td><select onchange="recalc()"><option>€ EUR</option><option>$ USD</option><option>NTD</option></select></td><td><select onchange="recalc()"><option value="">—</option><option>Cynthia</option><option selected>Grace</option></select></td><td><button class="del-btn" onclick="delExp(this)">×</button></td></tr>
+          <tr><td><input type="text" value="Wine purchase — Meursault bottle"></td><td><input type="number" value="3600" style="text-align:right" oninput="recalc()"></td><td><select onchange="recalc()"><option>€ EUR</option><option>$ USD</option><option selected>NTD</option></select></td><td><select onchange="recalc()"><option value="">—</option><option selected>Cynthia</option><option>Grace</option></select></td><td><button class="del-btn" onclick="delExp(this)">×</button></td></tr>
+        </tbody>
+        <tfoot><tr class="exp-add-row">
+          <td><input type="text" id="ni" placeholder="New item…"></td>
+          <td><input type="number" id="na" placeholder="0.00" style="text-align:right"></td>
+          <td><select id="nc"><option>€ EUR</option><option>$ USD</option><option>NTD</option></select></td>
+          <td><select id="np"><option value="">—</option><option>Cynthia</option><option>Grace</option></select></td>
+          <td><button class="btn btn-wine" onclick="addExp()" style="padding:4px 10px;font-size:12px">+</button></td>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="settle-section">
+      <div class="section-label" style="margin-bottom:12px;">Settle up</div>
+      <div class="breakdown" id="breakdown"></div>
+      <div class="settle-box">
+        <div class="settle-head">
+          <span class="settle-head-title">Who owes whom</span>
+          <span style="font-size:11px;color:var(--ink-ghost)">Split equally · Cynthia &amp; Grace</span>
+        </div>
+        <div class="settle-curr-row">
+          <label>Show result in</label>
+          <select id="result-currency" onchange="recalc()">
+            <option value="native">Each currency separately</option>
+            <option value="EUR">Convert all to € EUR</option>
+            <option value="USD">Convert all to $ USD</option>
+            <option value="NTD">Convert all to NTD</option>
+          </select>
+          <div class="rate-inputs" id="rate-inputs" style="display:none">
+            <div class="rate-field"><span>1 USD =</span><input type="number" id="r-usd-eur" value="0.92" step="0.01" oninput="recalc()"><span>EUR</span></div>
+            <div class="rate-field"><span>1 NTD =</span><input type="number" id="r-ntd-eur" value="0.028" step="0.001" oninput="recalc()"><span>EUR</span></div>
+            <div class="rate-field"><span>1 EUR =</span><input type="number" id="r-eur-usd" value="1.087" step="0.001" oninput="recalc()"><span>USD</span></div>
+            <div class="rate-field"><span>1 EUR =</span><input type="number" id="r-eur-ntd" value="35.5" step="0.1" oninput="recalc()"><span>NTD</span></div>
+            <div class="rate-field"><span>1 NTD =</span><input type="number" id="r-ntd-usd" value="0.031" step="0.001" oninput="recalc()"><span>USD</span></div>
+            <div class="rate-field"><span>1 USD =</span><input type="number" id="r-usd-ntd" value="32.5" step="0.1" oninput="recalc()"><span>NTD</span></div>
+          </div>
+        </div>
+        <div class="settle-result" id="settle-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ VISION BOARD ═══ -->
+  <div class="panel" id="panel-vision">
+    <div class="vb-controls">
+      <div class="tag-pill active" onclick="filterTag('all',this)">All</div>
+      <div class="tag-pill" onclick="filterTag('hotel',this)">Hotels</div>
+      <div class="tag-pill" onclick="filterTag('wine',this)">Wine</div>
+      <div class="tag-pill" onclick="filterTag('food',this)">Food</div>
+      <div class="tag-pill" onclick="filterTag('activity',this)">Activities</div>
+    </div>
+    <div class="add-pin-row" style="margin-bottom:16px;">
+      <input type="text" id="pin-url" placeholder="Paste URL…">
+      <input type="text" id="pin-title" placeholder="Label…" style="max-width:150px">
+      <input type="text" id="pin-tag-in" placeholder="Tag…" style="max-width:90px">
+      <button class="btn btn-wine" onclick="addPin()">+ Pin</button>
+    </div>
+    <div class="board-grid" id="board">
+      <div class="pin-card" data-tag="hotel"><div class="pin-emoji" style="background:#E1F5EE">🏰</div><div class="pin-body"><div class="pin-title">Hôtel Le Cep</div><div class="pin-loc">📍 Beaune</div><div class="pin-note">★★★★ · Historic 16th-c. mansion, within the ramparts</div><div class="pin-tag">hotel</div><a class="pin-link" href="https://hotel-cep-beaune.com" target="_blank">hotel-cep-beaune.com</a></div></div>
+      <div class="pin-card" data-tag="hotel"><div class="pin-emoji" style="background:#E6F1FB">🛏️</div><div class="pin-body"><div class="pin-title">Domaine de la Colombière</div><div class="pin-loc">📍 Gevrey-Chambertin</div><div class="pin-note">B&B in a working domaine · vineyard views</div><div class="pin-tag">hotel</div><a class="pin-link" href="#" target="_blank">domaine-colombiere.fr</a></div></div>
+      <div class="pin-card" data-tag="hotel"><div class="pin-emoji" style="background:#EEEDFE">🏨</div><div class="pin-body"><div class="pin-title">Hôtel Wilson</div><div class="pin-loc">📍 Dijon</div><div class="pin-note">17th-c. post house · central, great value</div><div class="pin-tag">hotel</div><a class="pin-link" href="#" target="_blank">wilson-hotel.com</a></div></div>
+      <div class="pin-card" data-tag="hotel"><div class="pin-emoji" style="background:#FAEEDA">✨</div><div class="pin-body"><div class="pin-title">Auberge du Clos Prieur</div><div class="pin-loc">📍 Gevrey-Chambertin</div><div class="pin-note">Boutique · restaurant on-site · quiet village setting</div><div class="pin-tag">hotel</div><a class="pin-link" href="#" target="_blank">clos-prieur.com</a></div></div>
+      <div class="pin-card" data-tag="wine"><div class="pin-emoji" style="background:#FAEEDA">🍷</div><div class="pin-body"><div class="pin-title">Domaine Comte Armand</div><div class="pin-loc">📍 Pommard</div><div class="pin-note">Grand Cru · private cellar tasting</div><div class="pin-tag">wine</div><a class="pin-link" href="https://domaine-comte-armand.com" target="_blank">domaine-comte-armand.com</a></div></div>
+      <div class="pin-card" data-tag="wine"><div class="pin-emoji" style="background:#FBEAF0">🕯️</div><div class="pin-body"><div class="pin-title">Château de Meursault</div><div class="pin-loc">📍 Meursault</div><div class="pin-note">Candlelit cave tasting · 13th-c. cellars</div><div class="pin-tag">wine</div><a class="pin-link" href="https://chateau-meursault.com" target="_blank">chateau-meursault.com</a></div></div>
+      <div class="pin-card" data-tag="wine"><div class="pin-emoji" style="background:#EEEDFE">🍇</div><div class="pin-body"><div class="pin-title">Domaine Rossignol-Trapet</div><div class="pin-loc">📍 Gevrey-Chambertin</div><div class="pin-note">Biodynamic · Chambertin Grand Cru · family-run</div><div class="pin-tag">wine</div><a class="pin-link" href="https://rossignol-trapet.com" target="_blank">rossignol-trapet.com</a></div></div>
+      <div class="pin-card" data-tag="wine"><div class="pin-emoji" style="background:#E1F5EE">🏛️</div><div class="pin-body"><div class="pin-title">Château du Clos de Vougeot</div><div class="pin-loc">📍 Vougeot</div><div class="pin-note">12th-c. walled Grand Cru · self-guided tour</div><div class="pin-tag">wine</div><a class="pin-link" href="https://closdevougeot.fr" target="_blank">closdevougeot.fr</a></div></div>
+      <div class="pin-card" data-tag="food"><div class="pin-emoji" style="background:#FAECE7">⭐</div><div class="pin-body"><div class="pin-title">Le Bénaton</div><div class="pin-loc">📍 Beaune</div><div class="pin-note">1 Michelin star · creative Burgundian · book early</div><div class="pin-tag">food</div><a class="pin-link" href="#" target="_blank">restaurantlebenaton.com</a></div></div>
+      <div class="pin-card" data-tag="food"><div class="pin-emoji" style="background:#EAF3DE">🥘</div><div class="pin-body"><div class="pin-title">Chez Guy</div><div class="pin-loc">📍 Gevrey-Chambertin</div><div class="pin-note">Classic boeuf bourguignon · local wine list</div><div class="pin-tag">food</div><a class="pin-link" href="#" target="_blank">chez-guy.fr</a></div></div>
+      <div class="pin-card" data-tag="food"><div class="pin-emoji" style="background:#FAEEDA">🍽️</div><div class="pin-body"><div class="pin-title">Ma Cuisine</div><div class="pin-loc">📍 Beaune</div><div class="pin-note">Wine-focused bistro · extraordinary cellar</div><div class="pin-tag">food</div><a class="pin-link" href="#" target="_blank">ma-cuisine-beaune.fr</a></div></div>
+      <div class="pin-card" data-tag="food"><div class="pin-emoji" style="background:#FBEAF0">⭐</div><div class="pin-body"><div class="pin-title">Le Pré aux Clercs</div><div class="pin-loc">📍 Dijon</div><div class="pin-note">1 Michelin star · Place de la Libération</div><div class="pin-tag">food</div><a class="pin-link" href="#" target="_blank">le-pre-aux-clercs.com</a></div></div>
+      <div class="pin-card" data-tag="food"><div class="pin-emoji" style="background:#E6F1FB">🥐</div><div class="pin-body"><div class="pin-title">Bistrot Bourguignon</div><div class="pin-loc">📍 Beaune</div><div class="pin-note">Casual lunch · jambon persillé</div><div class="pin-tag">food</div><a class="pin-link" href="#" target="_blank">bistrot-bourguignon.fr</a></div></div>
+      <div class="pin-card" data-tag="activity"><div class="pin-emoji" style="background:#F1EFE8">🚶</div><div class="pin-body"><div class="pin-title">Route des Grands Crus</div><div class="pin-loc">📍 Côte de Nuits</div><div class="pin-note">Vineyard trail · Gevrey to Nuits-Saint-Georges</div><div class="pin-tag">activity</div><a class="pin-link" href="#" target="_blank">routedesgrandscrus.fr</a></div></div>
+      <div class="pin-card" data-tag="activity"><div class="pin-emoji" style="background:#EAF3DE">🏥</div><div class="pin-body"><div class="pin-title">Hospices de Beaune</div><div class="pin-loc">📍 Beaune</div><div class="pin-note">15th-c. hospital · polychrome roof · unmissable</div><div class="pin-tag">activity</div><a class="pin-link" href="#" target="_blank">hospices-de-beaune.com</a></div></div>
+      <div class="pin-card" data-tag="activity"><div class="pin-emoji" style="background:#EEEDFE">🏛️</div><div class="pin-body"><div class="pin-title">Palais des Ducs de Bourgogne</div><div class="pin-loc">📍 Dijon</div><div class="pin-note">Fine arts museum · Gothic towers · free entry</div><div class="pin-tag">activity</div><a class="pin-link" href="#" target="_blank">musees.metropole-dijon.fr</a></div></div>
+      <div class="pin-card" data-tag="activity"><div class="pin-emoji" style="background:#FAEEDA">🛒</div><div class="pin-body"><div class="pin-title">Les Halles de Dijon</div><div class="pin-loc">📍 Dijon</div><div class="pin-note">Sat morning market · cheeses + mustard</div><div class="pin-tag">activity</div><a class="pin-link" href="#" target="_blank">halles-de-dijon.fr</a></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ PARIS MAP ═══ -->
+  <div class="panel" id="panel-paris">
+    <div class="map-layout">
+      <div class="map-embed">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d26000!2d2.3480!3d48.8620!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sfr!4v1" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <div class="map-sidebar">
+        <div class="map-note"><strong>🗺 Coverage</strong>Centered on 2nd arr. Covers Montmartre / Sacré-Cœur north to Catacombes / Parc Montsouris south of 14th.</div>
+        <a class="map-open-link" href="https://www.google.com/maps/@48.862,2.348,14z" target="_blank">↗ Open in Google Maps to pin &amp; route</a>
+        <div>
+          <div class="section-label">Saved spots</div>
+          <div class="pin-list-wrap" id="paris-map-pins">
+            <div class="map-pin-item"><div class="mp-dot mp-sight"></div><div class="mp-text"><div class="mp-name">Sacré-Cœur</div><div class="mp-sub">18th · Montmartre</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-sight"></div><div class="mp-text"><div class="mp-name">Place des Victoires</div><div class="mp-sub">2nd / 1st border</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-sight"></div><div class="mp-text"><div class="mp-name">Centre Pompidou</div><div class="mp-sub">4th arr.</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-sight"></div><div class="mp-text"><div class="mp-name">Notre-Dame de Paris</div><div class="mp-sub">4th · Île de la Cité</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-sight"></div><div class="mp-text"><div class="mp-name">Musée d'Orsay</div><div class="mp-sub">7th · Seine bank</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-sight"></div><div class="mp-text"><div class="mp-name">Tour Eiffel</div><div class="mp-sub">7th · Champ de Mars</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-sight"></div><div class="mp-text"><div class="mp-name">Panthéon</div><div class="mp-sub">5th · Latin Quarter</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-food"></div><div class="mp-text"><div class="mp-name">Brasserie Lipp</div><div class="mp-sub">6th · Saint-Germain</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-sight"></div><div class="mp-text"><div class="mp-name">Catacombes de Paris</div><div class="mp-sub">14th arr.</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-sight"></div><div class="mp-text"><div class="mp-name">Parc Montsouris</div><div class="mp-sub">14th · south of 14th</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+          </div>
+        </div>
+        <div>
+          <div class="section-label">Add a spot</div>
+          <div class="map-add-form">
+            <input type="text" id="pm-name" placeholder="Place name…">
+            <input type="text" id="pm-sub" placeholder="Arrondissement / note…">
+            <select id="pm-type"><option value="mp-sight">🔵 Sight</option><option value="mp-food">🟠 Food</option><option value="mp-wine">🩷 Wine / bar</option><option value="mp-hotel">🟢 Hotel</option><option value="mp-other">🟣 Other</option></select>
+            <button class="btn" onclick="addMapPin('paris-map-pins','pm-name','pm-sub','pm-type')">+ Add spot</button>
+          </div>
+        </div>
+        <div class="map-legend">
+          <div class="map-legend-item"><div class="mp-dot mp-sight"></div>Sight</div>
+          <div class="map-legend-item"><div class="mp-dot mp-food"></div>Food</div>
+          <div class="map-legend-item"><div class="mp-dot mp-wine"></div>Wine / bar</div>
+          <div class="map-legend-item"><div class="mp-dot mp-hotel"></div>Hotel</div>
+          <div class="map-legend-item"><div class="mp-dot mp-other"></div>Other</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BURGUNDY MAP ═══ -->
+  <div class="panel" id="panel-burgundy">
+    <div class="map-layout">
+      <div class="map-embed">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d180000!2d4.9!3d46.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sfr!4v1" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <div class="map-sidebar">
+        <div class="map-note"><strong>🍇 Coverage</strong>Dijon → Lyon corridor. Shows full Côte d'Or, Côte de Beaune, Mâconnais, and Beaujolais.</div>
+        <a class="map-open-link" href="https://www.google.com/maps/@46.9,4.9,10z" target="_blank">↗ Open in Google Maps to build route</a>
+        <div>
+          <div class="section-label">Saved stops</div>
+          <div class="pin-list-wrap" id="burgundy-map-pins">
+            <div class="map-pin-item"><div class="mp-dot mp-sight"></div><div class="mp-text"><div class="mp-name">Dijon</div><div class="mp-sub">Northern base · Palais des Ducs</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-wine"></div><div class="mp-text"><div class="mp-name">Gevrey-Chambertin</div><div class="mp-sub">Côte de Nuits · Grand Cru village</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-wine"></div><div class="mp-text"><div class="mp-name">Domaine Rossignol-Trapet</div><div class="mp-sub">Gevrey-Chambertin</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-wine"></div><div class="mp-text"><div class="mp-name">Château du Clos de Vougeot</div><div class="mp-sub">Vougeot · walled Grand Cru</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-sight"></div><div class="mp-text"><div class="mp-name">Beaune</div><div class="mp-sub">Côte de Beaune · wine capital</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-wine"></div><div class="mp-text"><div class="mp-name">Domaine Comte Armand</div><div class="mp-sub">Pommard</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-wine"></div><div class="mp-text"><div class="mp-name">Château de Meursault</div><div class="mp-sub">Meursault · cave tasting</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-wine"></div><div class="mp-text"><div class="mp-name">Puligny-Montrachet</div><div class="mp-sub">Côte de Beaune · white Burgundy</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-wine"></div><div class="mp-text"><div class="mp-name">Mâcon</div><div class="mp-sub">Southern Burgundy · Mâconnais</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+            <div class="map-pin-item"><div class="mp-dot mp-sight"></div><div class="mp-text"><div class="mp-name">Lyon</div><div class="mp-sub">Southern anchor · Vieux-Lyon</div></div><button class="mp-del" onclick="delMapPin(this)">×</button></div>
+          </div>
+        </div>
+        <div>
+          <div class="section-label">Add a stop</div>
+          <div class="map-add-form">
+            <input type="text" id="bm-name" placeholder="Place or domaine…">
+            <input type="text" id="bm-sub" placeholder="Village / note…">
+            <select id="bm-type"><option value="mp-wine">🩷 Winery / domaine</option><option value="mp-sight">🔵 Town / sight</option><option value="mp-food">🟠 Restaurant</option><option value="mp-hotel">🟢 Hotel</option><option value="mp-other">🟣 Other</option></select>
+            <button class="btn" onclick="addMapPin('burgundy-map-pins','bm-name','bm-sub','bm-type')">+ Add stop</button>
+          </div>
+        </div>
+        <div class="map-legend">
+          <div class="map-legend-item"><div class="mp-dot mp-wine"></div>Winery / domaine</div>
+          <div class="map-legend-item"><div class="mp-dot mp-sight"></div>Town / sight</div>
+          <div class="map-legend-item"><div class="mp-dot mp-food"></div>Restaurant</div>
+          <div class="map-legend-item"><div class="mp-dot mp-hotel"></div>Hotel</div>
+          <div class="map-legend-item"><div class="mp-dot mp-other"></div>Other</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ── AI COMMAND BAR ── -->
+<div class="ai-response" id="ai-response">
+  <button class="ai-close" onclick="document.getElementById('ai-response').classList.remove('show')">×</button>
+  <span id="ai-response-text"></span>
+</div>
+<div class="ai-bar">
+  <span class="ai-icon">✦</span>
+  <input class="ai-input" id="ai-input" placeholder="Try: add Château Latricières-Chambertin to vision board as wine…" onkeydown="if(event.key==='Enter')sendAI()">
+  <button class="ai-send" onclick="sendAI()">Ask Claude</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// PASTE YOUR ANTHROPIC API KEY BELOW
+const ANTHROPIC_API_KEY = "paste-your-key-here";
+// ══════════════════════════════════════════════
+
+// ── Tab switching ──
+function showTab(id, el) {
+  document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-' + id).classList.add('active');
+}
+
+let tabSeq = 0;
+function addTab() {
+  const name = prompt('Tab name:');
+  if (!name || !name.trim()) return;
+  tabSeq++;
+  const id = 'custom' + tabSeq;
+  const bar = document.getElementById('tabs-bar');
+  const addBtn = bar.querySelector('.tab-add');
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn';
+  btn.textContent = name.trim();
+  btn.onclick = function() { showTab(id, this); };
+  bar.insertBefore(btn, addBtn);
+  const panel = document.createElement('div');
+  panel.className = 'panel'; panel.id = 'panel-' + id;
+  panel.innerHTML = `<div contenteditable style="min-height:120px;font-size:14px;color:var(--ink);outline:none;padding:4px;" placeholder="Start typing…">${name.trim()}</div>`;
+  document.querySelector('.main').appendChild(panel);
+  showTab(id, btn);
+}
+
+// ── Tasks ──
+const taskData = [
+  { id:'g1', name:'Book before you go', tasks:[
+    { id:'t1', text:'Flights — CDG in Mon Jun 8 / out Sun Jun 14', done:false, who:'' },
+    { id:'t2', text:'TGV Paris → Dijon (Jun 9) — book on SNCF Connect', done:false, who:'' },
+    { id:'t3', text:'Wine tastings / domaine visits', done:false, who:'' },
+    { id:'t4', text:'Dinner reservations (Michelin spots book 2–3 months out)', done:false, who:'' },
+  ]},
+  { id:'g2', name:'Before departure', tasks:[
+    { id:'t5', text:'Download offline maps — Beaune, Gevrey, Dijon', done:false, who:'' },
+    { id:'t6', text:'Get Orange France eSIM (~€20 · 12GB)', done:false, who:'' },
+    { id:'t7', text:'Passport validity check (6 months past Jun 14)', done:false, who:'' },
+    { id:'t8', text:'Notify bank of France travel', done:false, who:'' },
+    { id:'t9', text:'Save all confirmation numbers offline', done:false, who:'' },
+  ]}
+];
+let idSeq = 200;
+function uid() { return 'i'+(++idSeq); }
+
+function renderTasks() {
+  const wrap = document.getElementById('tasks-wrap');
+  wrap.innerHTML = '';
+  taskData.forEach(group => {
+    const div = document.createElement('div');
+    div.className = 'task-group';
+    div.innerHTML = `<div class="tg-header">
+      <input class="tg-name" value="${group.name}" placeholder="Section name…" oninput="renameGroup('${group.id}',this.value)">
+      <button class="tg-del" onclick="deleteGroup('${group.id}')">×</button>
+    </div>
+    <ul class="task-list" id="tl-${group.id}"></ul>
+    <div class="add-task-row">
+      <input type="text" placeholder="Add task…" onkeydown="if(event.key==='Enter')addTaskFromInput('${group.id}',this)">
+      <select><option value="">—</option><option>Cynthia</option><option>Grace</option></select>
+      <button class="btn" onclick="addTaskFromBtn('${group.id}',this)" style="padding:5px 10px;font-size:11px">+ Add</button>
+    </div>`;
+    wrap.appendChild(div);
+    const ul = div.querySelector(`#tl-${group.id}`);
+    group.tasks.forEach(task => {
+      const li = document.createElement('li');
+      li.className = 'task-item';
+      li.innerHTML = `<div class="move-btns">
+        <button class="move-btn" onclick="moveTask('${group.id}','${task.id}',-1)">▲</button>
+        <button class="move-btn" onclick="moveTask('${group.id}','${task.id}',1)">▼</button>
+      </div>
+      <input type="checkbox" class="task-cb" ${task.done?'checked':''} onchange="toggleTask('${group.id}','${task.id}',this.checked)">
+      <input class="task-label${task.done?' done':''}" value="${task.text}" oninput="editTask('${group.id}','${task.id}',this.value)">
+      <select class="task-assign" onchange="assignTask('${group.id}','${task.id}',this.value)">
+        <option value="">—</option>
+        <option${task.who==='Cynthia'?' selected':''}>Cynthia</option>
+        <option${task.who==='Grace'?' selected':''}>Grace</option>
+      </select>
+      <button class="task-del" onclick="deleteTask('${group.id}','${task.id}')">×</button>`;
+      ul.appendChild(li);
+    });
+  });
+}
+function fg(gid){return taskData.find(g=>g.id===gid);}
+function ft(gid,tid){const g=fg(gid);return g?g.tasks.find(t=>t.id===tid):null;}
+function renameGroup(gid,v){const g=fg(gid);if(g)g.name=v;}
+function deleteGroup(gid){if(!confirm('Delete section?'))return;const i=taskData.findIndex(g=>g.id===gid);if(i>-1){taskData.splice(i,1);renderTasks();}}
+function toggleTask(gid,tid,c){const t=ft(gid,tid);if(t){t.done=c;renderTasks();}}
+function editTask(gid,tid,v){const t=ft(gid,tid);if(t)t.text=v;}
+function assignTask(gid,tid,v){const t=ft(gid,tid);if(t)t.who=v;}
+function deleteTask(gid,tid){const g=fg(gid);if(g){g.tasks=g.tasks.filter(t=>t.id!==tid);renderTasks();}}
+function moveTask(gid,tid,dir){const g=fg(gid);if(!g)return;const i=g.tasks.findIndex(t=>t.id===tid),j=i+dir;if(j<0||j>=g.tasks.length)return;[g.tasks[i],g.tasks[j]]=[g.tasks[j],g.tasks[i]];renderTasks();}
+function addTaskFromInput(gid,input){const row=input.closest('.add-task-row');const sel=row.querySelector('select');const text=input.value.trim();if(!text)return;const g=fg(gid);if(g)g.tasks.push({id:uid(),text,done:false,who:sel.value});input.value='';sel.value='';renderTasks();}
+function addTaskFromBtn(gid,btn){const row=btn.closest('.add-task-row');addTaskFromInput(gid,row.querySelector('input'));}
+function addGroup(){const inp=document.getElementById('new-group-name');const name=inp.value.trim();if(!name)return;taskData.push({id:uid(),name,tasks:[]});inp.value='';renderTasks();}
+renderTasks();
+
+// ── Expenses ──
+const PEOPLE=['Cynthia','Grace'],CURRENCIES=['€ EUR','$ USD','NTD'],SYMS={'€ EUR':'€','$ USD':'$','NTD':'NTD'},PILLS={'€ EUR':'pill-eur','$ USD':'pill-usd','NTD':'pill-ntd'};
+function getRows(){return[...document.querySelectorAll('#exp-body tr')].map(r=>{const inp=r.querySelectorAll('input[type=number]'),sel=r.querySelectorAll('select');return{amount:parseFloat(inp[0]?.value)||0,currency:sel[0]?.value||'',payer:sel[1]?.value||''};}).filter(r=>r.payer&&r.payer!=='—'&&r.amount>0);}
+function getRate(from,to){if(from===to)return 1;const v=id=>parseFloat(document.getElementById(id)?.value)||1;if(from==='$ USD'&&to==='€ EUR')return v('r-usd-eur');if(from==='€ EUR'&&to==='$ USD')return v('r-eur-usd');if(from==='NTD'&&to==='€ EUR')return v('r-ntd-eur');if(from==='€ EUR'&&to==='NTD')return v('r-eur-ntd');if(from==='$ USD'&&to==='NTD')return v('r-usd-ntd');if(from==='NTD'&&to==='$ USD')return v('r-ntd-usd');return 1;}
+function recalc(){
+  const rc=document.getElementById('result-currency').value;
+  document.getElementById('rate-inputs').style.display=rc!=='native'?'flex':'none';
+  const rows=getRows(),paid={},total={};
+  PEOPLE.forEach(p=>{paid[p]={};CURRENCIES.forEach(c=>paid[p][c]=0);});
+  CURRENCIES.forEach(c=>total[c]=0);
+  rows.forEach(r=>{paid[r.payer][r.currency]+=r.amount;total[r.currency]+=r.amount;});
+  const bd=document.getElementById('breakdown');bd.innerHTML='';
+  PEOPLE.forEach(p=>{
+    const card=document.createElement('div');card.className='person-card';
+    let pl=CURRENCIES.filter(c=>paid[p][c]>0).map(c=>`<div class="pc-row"><span class="pc-label">Paid (${SYMS[c]})</span><span class="pc-val">${SYMS[c]}${paid[p][c].toFixed(c==='NTD'?0:2)}</span></div>`).join('');
+    if(!pl)pl=`<div class="pc-row"><span class="pc-label">Paid</span><span class="pc-val">—</span></div>`;
+    let fl=CURRENCIES.filter(c=>total[c]>0).map(c=>`<div class="pc-row"><span class="pc-label">Fair share (${SYMS[c]})</span><span class="pc-val">${SYMS[c]}${(total[c]/2).toFixed(c==='NTD'?0:2)}</span></div>`).join('');
+    card.innerHTML=`<div class="pc-head">${p}</div><div class="pc-body">${pl}${fl}</div>`;
+    bd.appendChild(card);
+  });
+  let txns=[];
+  if(rc==='native'){
+    CURRENCIES.forEach(c=>{if(!total[c])return;const fair=total[c]/2;PEOPLE.forEach(p=>{const net=paid[p][c]-fair;if(net<-0.005){const other=PEOPLE.find(x=>x!==p);txns.push({from:p,to:other,amount:Math.abs(net),currency:c});}});});
+  } else {
+    const tgt=CURRENCIES.find(c=>c.startsWith(rc==='EUR'?'€':rc==='USD'?'$':'N'));
+    const net={};PEOPLE.forEach(p=>net[p]=0);
+    CURRENCIES.forEach(c=>{if(!total[c])return;const fair=total[c]/2;PEOPLE.forEach(p=>{net[p]+=(paid[p][c]-fair)*getRate(c,tgt);});});
+    PEOPLE.forEach(p=>{if(net[p]<-0.005){const other=PEOPLE.find(x=>x!==p);txns.push({from:p,to:other,amount:Math.abs(net[p]),currency:tgt});}});
+  }
+  const sr=document.getElementById('settle-result');
+  if(!txns.length){sr.innerHTML='<div class="no-settle">All square — no one owes anything! 🎉</div>';return;}
+  sr.innerHTML=txns.map(t=>`<div class="settle-row">
+    <span class="s-from">${t.from}</span>
+    <span class="s-arrow">→ owes →</span>
+    <span class="s-to">${t.to}</span>
+    <span class="s-pill ${PILLS[t.currency]||'pill-eur'}">${SYMS[t.currency]}${t.amount.toFixed(t.currency==='NTD'?0:2)}</span>
+  </div>`).join('');
+}
+function addExp(){const item=document.getElementById('ni').value.trim(),amt=document.getElementById('na').value,curr=document.getElementById('nc').value,payer=document.getElementById('np').value;if(!item)return;const tr=document.createElement('tr');tr.innerHTML=`<td><input type="text" value="${item}"></td><td><input type="number" value="${amt||''}" style="text-align:right" oninput="recalc()"></td><td><select onchange="recalc()"><option${curr==='€ EUR'?' selected':''}>€ EUR</option><option${curr==='$ USD'?' selected':''}>$ USD</option><option${curr==='NTD'?' selected':''}>NTD</option></select></td><td><select onchange="recalc()"><option value="">—</option><option${payer==='Cynthia'?' selected':''}>Cynthia</option><option${payer==='Grace'?' selected':''}>Grace</option></select></td><td><button class="del-btn" onclick="delExp(this)">×</button></td>`;document.getElementById('exp-body').appendChild(tr);document.getElementById('ni').value='';document.getElementById('na').value='';recalc();}
+function delExp(btn){btn.closest('tr').remove();recalc();}
+recalc();
+
+// ── Vision board ──
+function filterTag(tag,el){document.querySelectorAll('.tag-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.pin-card').forEach(c=>{c.style.display=(tag==='all'||c.dataset.tag===tag)?'':'none';});}
+function addPin(){const url=document.getElementById('pin-url').value.trim(),title=document.getElementById('pin-title').value.trim()||url,tag=document.getElementById('pin-tag-in').value.trim()||'activity';if(!url)return;const card=document.createElement('div');card.className='pin-card';card.dataset.tag=tag;card.innerHTML=`<div class="pin-emoji" style="background:var(--cream-dark)">🔗</div><div class="pin-body"><div class="pin-title">${title}</div><div class="pin-tag">${tag}</div><a class="pin-link" href="${url}" target="_blank">${url.replace(/^https?:\/\//,'').slice(0,28)}…</a></div>`;document.getElementById('board').appendChild(card);document.getElementById('pin-url').value='';document.getElementById('pin-title').value='';document.getElementById('pin-tag-in').value='';}
+
+// ── Map pins ──
+function addMapPin(listId,nameId,subId,typeId){const name=document.getElementById(nameId).value.trim(),sub=document.getElementById(subId).value.trim(),type=document.getElementById(typeId).value;if(!name)return;const list=document.getElementById(listId),item=document.createElement('div');item.className='map-pin-item';item.innerHTML=`<div class="mp-dot ${type}"></div><div class="mp-text"><div class="mp-name">${name}</div>${sub?`<div class="mp-sub">${sub}</div>`:''}</div><button class="mp-del" onclick="delMapPin(this)">×</button>`;list.appendChild(item);document.getElementById(nameId).value='';document.getElementById(subId).value='';}
+function delMapPin(btn){btn.closest('.map-pin-item').remove();}
+
+// ── AI command bar ──
+async function sendAI(){
+  const input=document.getElementById('ai-input');
+  const text=input.value.trim();
+  if(!text)return;
+  const respEl=document.getElementById('ai-response');
+  const respText=document.getElementById('ai-response-text');
+  respText.textContent='Thinking…';
+  respEl.classList.add('show');
+  input.value='';
+  if(ANTHROPIC_API_KEY==='paste-your-key-here'){
+    respText.textContent='⚠️ Add your Anthropic API key in the script section to enable AI commands.';
+    return;
+  }
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':ANTHROPIC_API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,
+        system:`You are a travel planning assistant for a Burgundy-Paris trip planner. Help with schedule planning, wine recommendations, restaurant suggestions, and trip logistics. Be concise and practical. When asked to add things to the vision board or schedule, describe what should be added clearly.`,
+        messages:[{role:'user',content:text}]})
+    });
+    const data=await res.json();
+    respText.textContent=data.content?.[0]?.text||'No response.';
+  } catch(e){
+    respText.textContent='Error contacting Claude. Check your API key and connection.';
+  }
+}
+</script>
+</body>
+</html>
