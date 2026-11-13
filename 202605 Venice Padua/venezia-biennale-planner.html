@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Venezia — Biennale 2026 Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#FAF6F4; --cream-dark:#F2EAE6; --parchment:#EAE0DA;
+  --wine:#1C6270; --wine-light:#277585; --wine-pale:#E8F4F6;
+  --gold:#B07A5A; --gold-light:#C99278;
+  --conch:#FAE8E4; --conch-mid:#F2D0C8; --conch-strong:#D9978A;
+  --lagoon:#2A8FA3; --lagoon-light:#4AAFC5; --lagoon-pale:#D6EEF4;
+  --ink:#141C1E; --ink-mid:#263338; --ink-soft:#4A6068; --ink-ghost:#8AA4AC;
+  --border:rgba(28,98,112,0.14); --border-strong:rgba(28,98,112,0.26);
+  --radius:10px; --radius-sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--conch);color:var(--ink);min-height:100vh;padding-bottom:100px;}
+
+/* SYNC INDICATOR */
+#sync-indicator{position:fixed;top:10px;right:14px;z-index:200;font-size:11px;padding:4px 10px;border-radius:20px;font-family:'DM Sans',sans-serif;transition:opacity .5s;pointer-events:none;}
+#sync-indicator.connecting{background:rgba(181,137,74,0.15);color:var(--gold);}
+#sync-indicator.saving{background:rgba(107,95,82,0.1);color:var(--ink-ghost);}
+#sync-indicator.saved{background:rgba(29,158,117,0.12);color:#0F6E56;}
+#sync-indicator.error{background:rgba(192,57,43,0.12);color:#C0392B;}
+
+/* HEADER */
+.header{background:var(--wine);padding:20px 32px 0;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;border-radius:50%;background:rgba(74,175,197,0.14);}
+.header::after{content:'';position:absolute;bottom:-30px;left:60px;width:140px;height:140px;border-radius:50%;background:rgba(250,232,228,0.08);}
+.header-inner{max-width:1200px;margin:0 auto;}
+.header-top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
+.trip-eyebrow{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light);margin-bottom:4px;}
+.trip-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:#FFF;letter-spacing:.01em;line-height:1;}
+.trip-title em{font-style:italic;color:var(--gold-light);}
+.trip-dates{font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px;letter-spacing:.04em;}
+.header-badge{text-align:right;font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;}
+.header-badge span{display:block;font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;color:rgba(255,255,255,0.7);}
+
+/* TABS */
+.tabs-bar{display:flex;gap:2px;align-items:flex-end;flex-wrap:wrap;}
+.tab-btn{padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:400;color:rgba(255,255,255,0.5);background:transparent;border:none;border-radius:8px 8px 0 0;cursor:pointer;letter-spacing:.03em;transition:all .18s;white-space:nowrap;position:relative;bottom:0;}
+.tab-btn:hover{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.06);}
+.tab-btn.active{color:var(--ink);background:var(--cream);font-weight:500;}
+.tab-add{padding:8px 14px;font-size:18px;color:rgba(255,255,255,0.35);background:transparent;border:none;border-radius:8px 8px 0 0;cursor:pointer;transition:all .18s;line-height:1;bottom:0;position:relative;}
+.tab-add:hover{color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.06);}
+
+/* MAIN */
+.main{max-width:1200px;margin:0 auto;padding:28px 32px 60px;}
+.panel{display:none;}.panel.active{display:block;}
+.section-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:10px;}
+
+/* EDITABLE */
+[contenteditable]:hover{outline:1px dashed rgba(28,98,112,0.28);outline-offset:2px;border-radius:3px;cursor:text;}
+[contenteditable]:focus{outline:1px solid var(--lagoon);outline-offset:2px;border-radius:3px;background:rgba(42,143,163,0.06);}
+
+/* SCHEDULE TOOLBAR */
+.sched-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.schedule-hint{font-size:11px;color:var(--ink-ghost);display:flex;align-items:center;gap:6px;}
+.schedule-hint::before{content:'';display:inline-block;width:14px;height:1px;background:var(--lagoon);}
+.sched-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.sched-btn{font-size:11px;font-weight:500;padding:5px 11px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .14s;white-space:nowrap;}
+.sched-btn-add{background:#FFF;color:var(--ink-mid);}
+.sched-btn-add:hover{background:var(--cream-dark);}
+.sched-btn-del{background:#FFF;color:#C0392B;border-color:rgba(192,57,43,0.3);}
+.sched-btn-del:hover{background:rgba(192,57,43,0.06);}
+
+/* SCHEDULE TABLE — frozen header row + frozen first column */
+.sched-wrap{overflow:auto;border-radius:var(--radius);border:1px solid var(--border);max-height:calc(100vh - 220px);}
+table.sched{width:100%;border-collapse:collapse;font-size:12px;background:#FFF;}
+table.sched thead tr th{position:sticky;top:0;z-index:3;background:var(--cream-dark);padding:0;border:1px solid var(--border);font-weight:500;}
+table.sched thead tr th.col-label{position:sticky;top:0;left:0;z-index:4;background:var(--cream-dark);}
+table.sched td.row-label{position:sticky;left:0;z-index:2;background:var(--cream-dark);font-weight:500;font-size:10px;letter-spacing:.04em;color:var(--ink-soft);white-space:nowrap;padding:0;border:1px solid var(--border);}
+.th-wrap{padding:10px 12px;display:block;}
+.day-name{font-size:14px;font-weight:500;color:var(--ink);display:block;letter-spacing:-.01em;}
+.day-sub{font-size:10px;font-weight:400;color:var(--ink-ghost);display:block;margin-top:3px;text-transform:uppercase;letter-spacing:.07em;}
+.day-loc{font-size:10px;color:var(--lagoon);display:block;margin-top:4px;font-style:italic;font-weight:400;line-height:1.35;}
+th.col-label{min-width:120px;text-align:left;}
+th.col-day{min-width:155px;text-align:left;}
+table.sched td{padding:7px 9px;border:1px solid var(--border);vertical-align:top;font-size:11px;line-height:1.6;color:var(--ink);min-height:40px;min-width:140px;}
+.rl-inner{display:block;padding:9px 12px;line-height:1.4;}
+td.cell{outline:none;}
+td.cell:empty::before{content:attr(data-ph);color:var(--ink-ghost);font-style:italic;font-size:10px;}
+td.cell:focus{background:rgba(42,143,163,0.05);outline:none;}
+.row-morning td:not(.row-label){background:rgba(214,238,244,0.22);}
+.row-lunch td:not(.row-label){background:rgba(250,232,228,0.30);}
+.row-afternoon td:not(.row-label){background:rgba(230,244,248,0.20);}
+.row-dinner td:not(.row-label){background:rgba(28,98,112,0.05);}
+.row-evening td:not(.row-label){background:rgba(238,237,254,0.18);}
+.row-transport td:not(.row-label){background:rgba(176,122,90,0.08);}
+.row-lodging td:not(.row-label){background:rgba(29,158,117,0.05);}
+.row-reservations td:not(.row-label){background:rgba(217,151,138,0.12);}
+.cn{font-size:10px;color:var(--ink-ghost);display:block;margin-top:2px;font-style:italic;}
+
+/* MEMBERS BAR */
+.members-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;max-width:600px;margin-bottom:16px;padding:10px 14px;background:var(--cream-dark);border:1px solid var(--border);border-radius:var(--radius);}
+.members-label{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-ghost);flex-shrink:0;}
+.members-pills{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
+.member-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;background:#FFF;border:1px solid var(--border-strong);font-size:11px;color:var(--ink-mid);}
+.member-pill-del{background:none;border:none;cursor:pointer;color:var(--ink-ghost);font-size:12px;line-height:1;padding:0;margin-left:2px;}
+.member-pill-del:hover{color:#C0392B;}
+.add-member-row{display:flex;gap:6px;align-items:center;}
+.add-member-row input{font-size:11px;padding:5px 9px;border:1px solid var(--border-strong);border-radius:5px;background:#FFF;color:var(--ink);outline:none;width:110px;font-family:'DM Sans',sans-serif;}
+.add-member-row input:focus{border-color:var(--lagoon);}
+.add-group-row input:focus{border-color:var(--lagoon);}
+.add-task-row input:focus{border-color:var(--lagoon);}
+.crew-add-row input:focus{border-color:var(--lagoon);}
+
+/* TASKS */
+.tasks-col{max-width:600px;}
+.task-group{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;background:#FFF;}
+.tg-header{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--cream-dark);border-bottom:1px solid var(--border);}
+.tg-name{flex:1;font-size:12px;font-weight:500;color:var(--ink);background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;}
+.tg-name:focus{background:rgba(181,137,74,0.08);border-radius:4px;padding:1px 4px;}
+.tg-del{background:none;border:none;cursor:pointer;color:var(--ink-ghost);font-size:15px;line-height:1;padding:0 2px;}
+.tg-del:hover{color:#C0392B;}
+.task-list{list-style:none;}
+.task-item{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border);background:#FFF;transition:background .12s;}
+.task-item:last-child{border-bottom:none;}
+.task-item:hover{background:var(--cream);}
+.move-btns{display:flex;flex-direction:column;gap:1px;flex-shrink:0;}
+.move-btn{background:none;border:none;cursor:pointer;color:var(--ink-ghost);font-size:9px;line-height:1;padding:1px 3px;border-radius:3px;}
+.move-btn:hover{background:var(--parchment);color:var(--ink);}
+.task-cb{width:15px;height:15px;accent-color:var(--wine);cursor:pointer;flex-shrink:0;}
+.task-label{flex:1;font-size:12px;color:var(--ink);background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;cursor:text;}
+.task-label:focus{background:rgba(181,137,74,0.06);border-radius:3px;padding:1px 4px;}
+.task-label.done{text-decoration:line-through;color:var(--ink-ghost);}
+.task-assign{font-size:11px;padding:2px 6px;border:1px solid var(--border-strong);border-radius:5px;background:var(--cream);color:var(--ink-soft);cursor:pointer;outline:none;font-family:'DM Sans',sans-serif;}
+.task-del{background:none;border:none;cursor:pointer;color:var(--ink-ghost);font-size:14px;line-height:1;padding:0 2px;flex-shrink:0;}
+.task-del:hover{color:#C0392B;}
+.add-task-row{display:flex;gap:6px;padding:8px 14px;background:var(--cream-dark);border-top:1px solid var(--border);}
+.add-task-row input{flex:1;font-size:11px;padding:5px 9px;border:1px solid var(--border-strong);border-radius:5px;background:#FFF;color:var(--ink);outline:none;font-family:'DM Sans',sans-serif;}
+.add-task-row input:focus{border-color:var(--gold);}
+.add-task-row select{font-size:11px;padding:5px 7px;border:1px solid var(--border-strong);border-radius:5px;background:#FFF;color:var(--ink);outline:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.add-group-row{display:flex;gap:10px;margin-top:6px;}
+.add-group-row input{flex:1;font-size:12px;padding:7px 11px;border:1px solid var(--border-strong);border-radius:6px;background:#FFF;color:var(--ink);outline:none;font-family:'DM Sans',sans-serif;}
+.add-group-row input:focus{border-color:var(--gold);}
+
+/* EXPENSES */
+.exp-wrap{border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;background:#FFF;}
+table.exp{width:100%;border-collapse:collapse;font-size:12px;}
+table.exp th{background:var(--cream-dark);padding:9px 12px;text-align:left;font-weight:500;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);border:1px solid var(--border);white-space:nowrap;}
+table.exp td{padding:7px 10px;border:1px solid var(--border);font-size:12px;vertical-align:middle;}
+table.exp tr:nth-child(even) td{background:rgba(247,243,238,0.5);}
+table.exp input,table.exp select{font-size:12px;padding:4px 7px;border:1px solid var(--border);border-radius:5px;background:#FFF;color:var(--ink);outline:none;width:100%;font-family:'DM Sans',sans-serif;}
+table.exp input:focus,table.exp select:focus{border-color:var(--lagoon);}
+.map-add-form input:focus{border-color:var(--lagoon);}
+.add-pin-row input:focus{border-color:var(--lagoon);}
+.exp-add-row td{background:var(--cream-dark)!important;}
+.settle-section{margin-top:24px;}
+.settle-box{border:1px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;background:#FFF;}
+.settle-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--cream-dark);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px;}
+.settle-head-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;color:var(--ink);}
+.settle-curr-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);background:#FFF;flex-wrap:wrap;}
+.settle-curr-row label{font-size:11px;color:var(--ink-soft);}
+.settle-curr-row select{font-size:12px;padding:4px 8px;border:1px solid var(--border-strong);border-radius:5px;background:var(--cream);color:var(--ink);outline:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.rate-inputs{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.rate-field{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--ink-soft);}
+.rate-field input{width:68px;font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;background:#FFF;color:var(--ink);outline:none;font-family:'DM Sans',sans-serif;}
+.breakdown{display:flex;gap:12px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--border);}
+.person-card{flex:1;min-width:150px;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.pc-head{padding:8px 12px;background:var(--lagoon);font-size:12px;font-weight:500;color:#FFF;}
+.pc-body{padding:10px 12px;}
+.pc-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;}
+.pc-row:last-child{margin-bottom:0;}
+.pc-label{color:var(--ink-soft);}.pc-val{font-weight:500;color:var(--ink);}
+.settle-result{padding:14px 16px;}
+.settle-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--cream);margin-bottom:8px;}
+.settle-row:last-child{margin-bottom:0;}
+.s-from{font-size:13px;font-weight:500;color:var(--ink);min-width:70px;}
+.s-arrow{color:var(--ink-ghost);font-size:14px;}
+.s-to{font-size:13px;font-weight:500;color:var(--ink);min-width:70px;}
+.s-pill{font-size:12px;font-weight:500;padding:4px 14px;border-radius:20px;margin-left:auto;}
+.pill-eur{background:rgba(29,158,117,0.12);color:#0F6E56;}
+.pill-usd{background:rgba(55,138,221,0.12);color:#185FA5;}
+.pill-ntd{background:rgba(127,119,221,0.12);color:#3C3489;}
+.no-settle{font-size:12px;color:var(--ink-ghost);font-style:italic;padding:6px 0;}
+
+/* VISION BOARD */
+.vb-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.tag-pill{padding:4px 12px;border-radius:20px;border:1px solid var(--border-strong);background:#FFF;font-size:11px;color:var(--ink-soft);cursor:pointer;transition:all .14s;}
+.tag-pill.active,.tag-pill:hover{background:var(--wine);color:#FFF;border-color:var(--wine);}
+.add-pin-row{display:flex;gap:8px;flex-wrap:wrap;}
+.add-pin-row input{flex:1;min-width:120px;font-size:12px;padding:7px 11px;border:1px solid var(--border-strong);border-radius:6px;background:#FFF;color:var(--ink);outline:none;font-family:'DM Sans',sans-serif;}
+.add-pin-row input:focus{border-color:var(--gold);}
+.board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:14px;}
+.pin-card{border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);background:#FFF;cursor:pointer;transition:transform .16s,box-shadow .16s;position:relative;}
+.pin-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(28,26,24,0.1);}
+.pin-card-link{position:absolute;inset:0;z-index:1;border-radius:var(--radius);}
+.pin-card-link:focus{outline:2px solid var(--gold);outline-offset:2px;}
+.pin-emoji{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:30px;}
+.pin-body{padding:10px 12px;}
+.pin-title{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:2px;}
+.pin-loc{font-size:10px;color:var(--ink-ghost);margin-bottom:3px;}
+.pin-note{font-size:10px;color:var(--ink-soft);line-height:1.45;margin-bottom:3px;}
+.pin-tag{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:3px;}
+.pin-link{font-size:10px;color:var(--gold);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block;text-decoration:none;position:relative;z-index:2;}
+.pin-link:hover{color:var(--wine);}
+.pin-edit-url{position:relative;z-index:2;display:inline-block;margin-top:4px;font-size:9px;color:var(--ink-ghost);background:none;border:none;cursor:pointer;text-decoration:underline dotted;padding:0;font-family:'DM Sans',sans-serif;}
+.pin-edit-url:hover{color:var(--gold);}
+
+/* MAPS */
+.map-layout{display:flex;gap:16px;flex-wrap:wrap;}
+.map-embed{flex:1;min-width:260px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);}
+.map-embed iframe{display:block;width:100%;height:500px;border:none;}
+.mymaps-setup{display:flex;justify-content:center;padding:40px 16px;}
+.mymaps-card{max-width:540px;width:100%;background:#FFF;border:1px solid var(--border-strong);border-radius:var(--radius);padding:28px 28px 22px;}
+.mymaps-icon{font-size:28px;margin-bottom:10px;}
+.mymaps-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--ink);margin-bottom:14px;}
+.mymaps-body{font-size:12px;color:var(--ink-soft);line-height:1.7;margin-bottom:16px;}
+.mymaps-body ol{padding-left:18px;margin-top:8px;}
+.mymaps-body li{margin-bottom:6px;}
+.mymaps-body a{color:var(--lagoon);text-decoration:none;}.mymaps-body a:hover{text-decoration:underline;}
+.mymaps-body code{background:var(--cream-dark);padding:1px 5px;border-radius:3px;font-size:11px;}
+.mymaps-input-row{display:flex;gap:8px;margin-bottom:10px;}
+.mymaps-input-row input{flex:1;font-size:12px;padding:7px 11px;border:1px solid var(--border-strong);border-radius:6px;background:var(--cream);color:var(--ink);outline:none;font-family:'DM Sans',sans-serif;}
+.mymaps-input-row input:focus{border-color:var(--lagoon);}
+.mymaps-hint{font-size:11px;color:var(--ink-ghost);line-height:1.5;}
+.btn-lagoon{background:var(--lagoon);color:#FFF;border-color:var(--lagoon);}
+.btn-lagoon:hover{background:var(--lagoon-light);}
+
+/* MAP EMBED */
+.map-embed iframe{display:block;width:100%;height:500px;border:none;}
+.map-sidebar{width:210px;flex-shrink:0;display:flex;flex-direction:column;gap:12px;}
+.map-note{font-size:11px;color:var(--ink-soft);background:var(--cream-dark);border:1px solid var(--border);border-radius:8px;padding:10px 12px;line-height:1.6;}
+.map-note strong{display:block;color:var(--ink-mid);font-size:11px;margin-bottom:4px;}
+.map-open-link{display:block;text-align:center;font-size:11px;color:var(--wine);padding:8px;border:1px solid var(--border-strong);border-radius:7px;text-decoration:none;background:var(--cream-dark);transition:background .14s;}
+.map-open-link:hover{background:var(--wine-pale);}
+.pin-list-wrap{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#FFF;}
+.map-pin-item{display:flex;align-items:flex-start;gap:7px;padding:7px 10px;border-bottom:1px solid var(--border);}
+.map-pin-item:last-child{border-bottom:none;}
+.mp-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.mp-sight{background:#378ADD;}.mp-wine{background:var(--wine);}
+.mp-food{background:#D85A30;}.mp-hotel{background:#1D9E75;}.mp-other{background:#7F77DD;}
+.mp-text{flex:1;}.mp-name{font-size:11px;font-weight:500;color:var(--ink);}
+.mp-sub{font-size:10px;color:var(--ink-ghost);margin-top:1px;}
+.mp-del{background:none;border:none;cursor:pointer;color:var(--ink-ghost);font-size:13px;line-height:1;padding:0 2px;}
+.mp-del:hover{color:#C0392B;}
+.map-add-form{border:1px solid var(--border);border-radius:8px;padding:10px;background:var(--cream-dark);display:flex;flex-direction:column;gap:6px;}
+.map-add-form input,.map-add-form select{font-size:11px;padding:5px 8px;border:1px solid var(--border-strong);border-radius:5px;background:#FFF;color:var(--ink);outline:none;width:100%;font-family:'DM Sans',sans-serif;}
+.map-add-form input:focus{border-color:var(--gold);}
+.map-legend{display:flex;flex-direction:column;gap:4px;}
+.map-legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--ink-soft);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;font-size:12px;font-weight:500;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:#FFF;color:var(--ink-mid);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .14s;white-space:nowrap;}
+.btn:hover{background:var(--cream-dark);}
+.btn-wine{background:var(--wine);color:#FFF;border-color:var(--wine);}
+.btn-wine:hover{background:var(--wine-light);}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--ink-ghost);font-size:14px;line-height:1;padding:0 4px;}
+.del-btn:hover{color:#C0392B;}
+
+/* CREW BAR */
+.crew-bar{padding:8px 0 6px;display:flex;align-items:center;}
+.crew-dropdown-wrap{position:relative;}
+.crew-toggle{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,0.85);transition:all .15s;}
+.crew-toggle:hover{background:rgba(255,255,255,0.16);}
+.crew-icon{font-size:13px;}
+.crew-caret{font-size:10px;color:rgba(255,255,255,0.5);transition:transform .15s;}
+.crew-toggle.open .crew-caret{transform:rotate(180deg);}
+.crew-menu{position:fixed;min-width:240px;background:var(--cream);border:1px solid var(--border-strong);border-radius:10px;box-shadow:0 8px 32px rgba(28,26,24,0.22);z-index:500;display:none;overflow:hidden;}
+.crew-menu.show{display:block;}
+.crew-menu-section{padding:10px 14px;}
+.crew-menu-label{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:8px;}
+.crew-menu-divider{height:1px;background:var(--border);margin:0;}
+.crew-member-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);}
+.crew-member-row:last-child{border-bottom:none;}
+.crew-member-name{font-size:13px;color:var(--ink);display:flex;align-items:center;gap:8px;}
+.crew-member-avatar{width:24px;height:24px;border-radius:50%;background:var(--lagoon);color:#fff;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.crew-member-del{background:none;border:none;cursor:pointer;color:var(--ink-ghost);font-size:13px;line-height:1;padding:2px 4px;border-radius:4px;}
+.crew-member-del:hover{color:#C0392B;background:rgba(192,57,43,0.08);}
+.crew-add-row{display:flex;gap:6px;}
+.crew-add-row input{flex:1;font-size:12px;padding:5px 9px;border:1px solid var(--border-strong);border-radius:6px;background:#FFF;color:var(--ink);outline:none;font-family:'DM Sans',sans-serif;}
+.crew-add-row input:focus{border-color:var(--gold);}
+.crew-add-btn{font-size:11px;font-weight:500;padding:5px 10px;border-radius:6px;border:1px solid var(--border-strong);background:var(--lagoon);color:#FFF;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;}
+.crew-add-btn:hover{background:var(--lagoon-light);}
+
+/* AI BAR */
+.ai-bar{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);width:min(680px,calc(100vw - 48px));background:var(--wine);border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 8px 32px rgba(28,98,112,0.38);z-index:100;}
+.ai-icon{font-size:16px;flex-shrink:0;color:var(--lagoon-light);}
+.ai-input{flex:1;background:transparent;border:none;outline:none;font-size:13px;color:#FFF;font-family:'DM Sans',sans-serif;}
+.ai-input::placeholder{color:rgba(255,255,255,0.45);}
+.ai-send{background:var(--conch-strong);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;color:#FFF;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .14s;flex-shrink:0;}
+.ai-send:hover{background:var(--gold-light);}
+.ai-response{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);width:min(680px,calc(100vw - 48px));background:#FFF;border:1px solid var(--border-strong);border-radius:12px;padding:14px 16px;font-size:12px;color:var(--ink);line-height:1.6;box-shadow:0 4px 20px rgba(28,26,24,0.12);z-index:99;display:none;}
+.ai-response.show{display:block;}
+.ai-close{float:right;background:none;border:none;cursor:pointer;color:var(--ink-ghost);font-size:14px;line-height:1;}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="pw-gate" style="position:fixed;inset:0;z-index:9999;background:var(--wine);display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;">
+  <div style="background:var(--cream);border-radius:16px;padding:36px 40px;max-width:340px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(28,26,24,0.35);">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--wine);margin-bottom:4px;">Venezia</div>
+    <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:24px;">Biennale Planner · 2026</div>
+    <input id="pw-input" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkPw()"
+      style="width:100%;font-size:14px;padding:10px 14px;border:1px solid var(--border-strong);border-radius:8px;background:#fff;color:var(--ink);outline:none;font-family:'DM Sans',sans-serif;text-align:center;margin-bottom:10px;">
+    <div id="pw-error" style="font-size:11px;color:#C0392B;min-height:16px;margin-bottom:10px;"></div>
+    <button onclick="checkPw()" style="width:100%;padding:10px;background:var(--wine);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">Enter</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  if(sessionStorage.getItem('bp_auth')==='1'){
+    document.getElementById('pw-gate').style.display='none';
+  }
+})();
+function checkPw(){
+  const val=document.getElementById('pw-input').value;
+  if(val==='VeneziaBiennale'){
+    sessionStorage.setItem('bp_auth','1');
+    document.getElementById('pw-gate').style.display='none';
+  } else {
+    document.getElementById('pw-error').textContent='Incorrect password — try again';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+</script>
+
+<div id="sync-indicator" class="connecting">⟳ Connecting…</div>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div>
+        <div class="trip-eyebrow">Travel planner · 2026</div>
+        <div class="trip-title">Venezia<em> · </em>Biennale</div>
+        <div class="trip-dates">May 2026 · Venice Biennale Season</div>
+      </div>
+      <div class="header-badge"><span>🇮🇹</span>Venezia</div>
+    </div>
+
+    <!-- CREW BAR -->
+    <div class="crew-bar">
+      <div class="crew-dropdown-wrap">
+        <button class="crew-toggle" onclick="toggleCrewMenu()" id="crew-toggle-btn">
+          <span class="crew-icon">👥</span>
+          <span id="crew-label">View Crew</span>
+          <span class="crew-caret">▾</span>
+        </button>
+        <div class="crew-menu" id="crew-menu">
+          <div class="crew-menu-section">
+            <div class="crew-menu-label">Crew</div>
+            <div id="crew-member-list"></div>
+          </div>
+          <div class="crew-menu-divider"></div>
+          <div class="crew-menu-section">
+            <div class="crew-menu-label">Edit crew</div>
+            <div class="crew-add-row">
+              <input type="text" id="new-member-input" placeholder="Add name…" onkeydown="if(event.key==='Enter')addMember()">
+              <button class="crew-add-btn" onclick="addMember()">+ Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs-bar" id="tabs-bar">
+      <button class="tab-btn active" onclick="showTab('schedule',this)">📅 Schedule</button>
+      <button class="tab-btn" onclick="showTab('tasks',this)">✅ Tasks</button>
+      <button class="tab-btn" onclick="showTab('expenses',this)">💶 Expenses</button>
+      <button class="tab-btn" onclick="showTab('vision',this)">📌 Vision Board</button>
+      <button class="tab-btn" onclick="showTab('venice',this)">🚢 Venice Map</button>
+      <button class="tab-add" onclick="addTab()" title="Add tab">＋</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- SCHEDULE -->
+<div class="panel active" id="panel-schedule">
+  <div class="sched-toolbar">
+    <span class="schedule-hint">Click any header or cell to edit — syncs automatically</span>
+    <div class="sched-btns">
+      <button class="sched-btn sched-btn-add" onclick="schedAddCol()" title="Add column">＋ Column</button>
+      <button class="sched-btn sched-btn-del" onclick="schedDelCol()" title="Delete last column">－ Column</button>
+      <button class="sched-btn sched-btn-add" onclick="schedAddRow()" title="Add row">＋ Row</button>
+      <button class="sched-btn sched-btn-del" onclick="schedDelRow()" title="Delete last row">－ Row</button>
+    </div>
+  </div>
+  <div class="sched-wrap" id="sched-wrap"></div>
+</div>
+
+<!-- TASKS -->
+<div class="panel" id="panel-tasks">
+  <div class="members-bar" id="members-bar">
+    <span class="members-label">People</span>
+    <div class="members-pills" id="members-pills"></div>
+    <div class="add-member-row">
+      <input type="text" id="new-member-input" placeholder="Add name…" maxlength="30" onkeydown="if(event.key==='Enter')addMember()">
+      <button class="btn" onclick="addMember()" style="padding:5px 11px;font-size:11px">+ Add</button>
+    </div>
+  </div>
+  <div class="tasks-col" id="tasks-wrap"></div>
+  <div class="add-group-row" style="max-width:600px;margin-top:4px;">
+    <input type="text" id="new-group-name" placeholder="New section name…" onkeydown="if(event.key==='Enter')addGroup()">
+    <button class="btn" onclick="addGroup()">+ Add section</button>
+  </div>
+</div>
+
+<!-- EXPENSES -->
+<div class="panel" id="panel-expenses">
+  <div class="members-bar" id="exp-members-bar">
+    <span class="members-label">People</span>
+    <div class="members-pills" id="exp-members-pills"></div>
+    <div class="add-member-row">
+      <input type="text" id="exp-new-member-input" placeholder="Add name…" maxlength="30" onkeydown="if(event.key==='Enter')addMemberFromExp()">
+      <button class="btn" onclick="addMemberFromExp()" style="padding:5px 11px;font-size:11px">+ Add</button>
+    </div>
+  </div>
+  <div class="section-label" style="margin-bottom:12px;">Expense log</div>
+  <div class="exp-wrap"><table class="exp">
+    <thead><tr>
+      <th style="min-width:190px">Item</th><th style="min-width:85px">Amount</th>
+      <th style="min-width:95px">Currency</th><th style="min-width:105px">Paid by</th><th style="width:32px"></th>
+    </tr></thead>
+    <tbody id="exp-body"></tbody>
+    <tfoot><tr class="exp-add-row">
+      <td><input type="text" id="ni" placeholder="New item…"></td>
+      <td><input type="number" id="na" placeholder="0.00" style="text-align:right"></td>
+      <td><select id="nc"><option>€ EUR</option><option>$ USD</option><option>NTD</option></select></td>
+      <td><select id="np"></select></td>
+      <td><button class="btn btn-wine" onclick="addExp()" style="padding:4px 10px;font-size:12px">+</button></td>
+    </tr></tfoot>
+  </table></div>
+  <div class="settle-section">
+    <div class="section-label" style="margin-bottom:12px;">Settle up</div>
+    <div class="breakdown" id="breakdown"></div>
+    <div class="settle-box">
+      <div class="settle-head"><span class="settle-head-title">Who owes whom</span><span id="settle-subtitle" style="font-size:11px;color:var(--ink-ghost)">Split equally</span></div>
+      <div class="settle-curr-row">
+        <label>Show result in</label>
+        <select id="result-currency" onchange="recalc()">
+          <option value="native">Each currency separately</option>
+          <option value="EUR">Convert all to € EUR</option>
+          <option value="USD">Convert all to $ USD</option>
+          <option value="NTD">Convert all to NTD</option>
+        </select>
+        <div class="rate-inputs" id="rate-inputs" style="display:none">
+          <div class="rate-field"><span>1 USD =</span><input type="number" id="r-usd-eur" value="0.92" step="0.01" oninput="recalc()"><span>EUR</span></div>
+          <div class="rate-field"><span>1 NTD =</span><input type="number" id="r-ntd-eur" value="0.028" step="0.001" oninput="recalc()"><span>EUR</span></div>
+          <div class="rate-field"><span>1 EUR =</span><input type="number" id="r-eur-usd" value="1.087" step="0.001" oninput="recalc()"><span>USD</span></div>
+          <div class="rate-field"><span>1 EUR =</span><input type="number" id="r-eur-ntd" value="35.5" step="0.1" oninput="recalc()"><span>NTD</span></div>
+          <div class="rate-field"><span>1 NTD =</span><input type="number" id="r-ntd-usd" value="0.031" step="0.001" oninput="recalc()"><span>USD</span></div>
+          <div class="rate-field"><span>1 USD =</span><input type="number" id="r-usd-ntd" value="32.5" step="0.1" oninput="recalc()"><span>NTD</span></div>
+        </div>
+      </div>
+      <div class="settle-result" id="settle-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- VISION BOARD -->
+<div class="panel" id="panel-vision">
+  <div class="vb-controls">
+    <div class="tag-pill active" data-tag="all" onclick="filterTag('all',this)">All</div>
+    <div class="tag-pill" data-tag="food" onclick="filterTag('food',this)">Food & Bacari</div>
+    <div class="tag-pill" data-tag="wine" onclick="filterTag('wine',this)">Wine Bars</div>
+    <div class="tag-pill" data-tag="activity" onclick="filterTag('activity',this)">Art & Sights</div>
+    <div class="tag-pill" data-tag="biennale" onclick="filterTag('biennale',this)">Biennale</div>
+  </div>
+  <div class="add-pin-row" style="margin-bottom:16px;">
+    <input type="text" id="pin-url" placeholder="Paste URL…">
+    <input type="text" id="pin-title" placeholder="Label…" style="max-width:150px">
+    <input type="text" id="pin-tag-in" placeholder="Tag…" style="max-width:90px">
+    <button class="btn btn-wine" onclick="addPin()">+ Pin</button>
+  </div>
+  <div class="board-grid" id="board"></div>
+</div>
+
+<!-- VENICE MAP -->
+<div class="panel" id="panel-venice">
+  <div class="mymaps-setup" id="venice-setup">
+    <div class="mymaps-card">
+      <div class="mymaps-icon">🗺</div>
+      <div class="mymaps-title">Connect your personal Google Map</div>
+      <div class="mymaps-body">
+        <p>Your embedded map will reflect your saved pins in real time. To set it up:</p>
+        <ol>
+          <li>Go to <a href="https://mymaps.google.com" target="_blank">mymaps.google.com</a> and create a map for Venice</li>
+          <li>Click <strong>Share</strong> → set to <em>"Anyone with the link can view"</em></li>
+          <li>Click the <strong>⋮ menu → Embed on my site</strong> and copy the <code>src="..."</code> URL</li>
+          <li>Paste it below</li>
+        </ol>
+      </div>
+      <div class="mymaps-input-row">
+        <input type="text" id="venice-map-url" placeholder="Paste your Google My Maps embed URL here…" oninput="previewMap('venice')">
+        <button class="btn btn-lagoon" onclick="saveMapUrl('venice')">Save & embed</button>
+      </div>
+      <div class="mymaps-hint">The map will update automatically whenever you add pins in Google Maps — no need to re-paste.</div>
+    </div>
+  </div>
+  <div class="map-layout" id="venice-map-layout" style="display:none">
+    <div class="map-embed" id="venice-map-embed-wrap">
+      <iframe id="venice-iframe" src="" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <div class="map-sidebar">
+      <div class="map-note"><strong>🗺 Your Venice map</strong>Pins you save in Google My Maps appear here automatically. Open Google Maps to add/edit pins and routes.</div>
+      <a class="map-open-link" id="venice-open-link" href="https://mymaps.google.com" target="_blank">↗ Open in Google Maps to edit pins</a>
+      <button class="btn" onclick="changeMapUrl('venice')" style="width:100%;margin-top:8px;font-size:11px;">↺ Change map URL</button>
+      <div><div class="section-label" style="margin-top:12px;">Saved spots</div><div class="pin-list-wrap" id="venice-map-pins"></div></div>
+      <div><div class="section-label">Add a note</div>
+        <div class="map-add-form">
+          <input type="text" id="vm-name" placeholder="Place name…">
+          <input type="text" id="vm-sub" placeholder="Sestiere / note…">
+          <select id="vm-type"><option value="mp-sight">🔵 Sight</option><option value="mp-food">🟠 Food / bacaro</option><option value="mp-wine">🩷 Wine bar</option><option value="mp-other">🟣 Other</option></select>
+          <button class="btn" onclick="addMapPin('venice','vm-name','vm-sub','vm-type')">+ Add note</button>
+        </div>
+      </div>
+      <div class="map-legend">
+        <div class="map-legend-item"><div class="mp-dot mp-sight"></div>Sight</div>
+        <div class="map-legend-item"><div class="mp-dot mp-food"></div>Food / bacaro</div>
+        <div class="map-legend-item"><div class="mp-dot mp-wine"></div>Wine bar</div>
+        <div class="map-legend-item"><div class="mp-dot mp-other"></div>Other</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div><!-- /main -->
+
+<div class="ai-response" id="ai-response">
+  <button class="ai-close" onclick="document.getElementById('ai-response').classList.remove('show')">×</button>
+  <span id="ai-response-text"></span>
+</div>
+<div class="ai-bar">
+  <span class="ai-icon">✦</span>
+  <input class="ai-input" id="ai-input" placeholder="Ask Claude anything about the trip…" onkeydown="if(event.key==='Enter')sendAI()">
+  <button class="ai-send" onclick="sendAI()">Ask Claude</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+// ═══════════════════════════════════════
+// ANTHROPIC API KEY — paste yours below
+const ANTHROPIC_API_KEY = 'paste-your-key-here';
+// ═══════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════
+// FIREBASE CONFIG — create a FREE project at console.firebase.google.com
+// Replace ALL values below with your own project credentials
+// Project name suggestion: venezia-biennale-2026
+const FIREBASE_CONFIG = {
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_PROJECT.firebaseapp.com",
+  databaseURL:       "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId:         "YOUR_PROJECT",
+  storageBucket:     "YOUR_PROJECT.firebasestorage.app",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId:             "YOUR_APP_ID"
+};
+// ═══════════════════════════════════════════════════════════
+
+firebase.initializeApp(FIREBASE_CONFIG);
+const db = firebase.database();
+
+// Sync status
+const syncEl = document.getElementById('sync-indicator');
+function setSyncStatus(s){
+  const labels={connecting:'⟳ Connecting…',saving:'⬆ Saving…',saved:'✓ Saved',error:'⚠ Offline'};
+  syncEl.className=s; syncEl.textContent=labels[s]||s; syncEl.style.opacity='1';
+  if(s==='saved') setTimeout(()=>{if(syncEl.className==='saved')syncEl.style.opacity='0';},2500);
+}
+db.ref('.info/connected').on('value',s=>setSyncStatus(s.val()?'saved':'error'));
+
+// Debounce
+const _timers={};
+function debounce(k,fn,ms=700){clearTimeout(_timers[k]);_timers[k]=setTimeout(fn,ms);}
+
+// Generic write
+function fbSet(path,val){
+  setSyncStatus('saving');
+  db.ref(path).set(val===''?null:val).then(()=>setSyncStatus('saved')).catch(()=>setSyncStatus('error'));
+}
+
+// Utility
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+let _seq=200; function uid(){return 'i'+(++_seq);}
+
+// ══════════════════════════════════════════
+// SCHEDULE — data-driven, add/delete cols & rows
+// ══════════════════════════════════════════
+
+const ROW_COLORS = {
+  morning:   'rgba(214,238,244,0.22)',
+  lunch:     'rgba(250,232,228,0.30)',
+  afternoon: 'rgba(230,244,248,0.20)',
+  dinner:    'rgba(28,98,112,0.05)',
+  evening:   'rgba(238,237,254,0.18)',
+  transport: 'rgba(176,122,90,0.08)',
+  lodging:   'rgba(29,158,117,0.05)',
+  reservations: 'rgba(217,151,138,0.12)',
+};
+
+const DEFAULT_SCHED = {
+  cols: [
+    {id:'d0', name:'May 9',  sub:'Saturday',  loc:'Venezia · Arrive + Biennale Inauguration'},
+    {id:'d1', name:'May 10', sub:'Sunday',     loc:'Venezia · Biennale + San Marco'},
+    {id:'d2', name:'May 11', sub:'Monday',     loc:'Venezia · Biennale + Dorsoduro'},
+    {id:'d3', name:'May 12', sub:'Tuesday',    loc:'Venezia · Biennale + Cannaregio'},
+    {id:'d4', name:'May 13', sub:'Wednesday',  loc:'Venezia · Slow day + lagoon'},
+    {id:'d5', name:'May 14', sub:'Thursday',   loc:'Venezia · Depart'},
+  ],
+  rows: [
+    {id:'morning',      label:'🌅 Morning',       cells:{}},
+    {id:'lunch',        label:'🥗 Lunch',          cells:{}},
+    {id:'afternoon',    label:'☀️ Afternoon',      cells:{
+      d0:'🎨 Biennale Inauguration\nGiardini · official opening ceremony\nhttps://www.labiennale.org/en/art/2026',
+      d1:'🌿 Nordic Pavilion\n+ 🇮🇹 Italian Pavilion (Arsenale Corderie)\nBoth Giardini complex · 3 min apart · allow 3 hrs\nhttps://www.labiennale.org/en/art/2026',
+      d2:'🇺🇦 Still Joy — from Ukraine · Pinchuk Foundation\nPalazzo Contarini-Polignac · Dorsoduro 874\nhttps://pinchukartcentre.org\nFollow the energy along Zattere waterfront after',
+      d3:'🇹🇼 Taiwan — Screen Melancholy · Li Yi-Fan\nPalazzo delle Prigioni · Riva degli Schiavoni 4209\nhttps://www.taipeifineartsmuseum.com'
+    }},
+    {id:'dinner',       label:'🍽️ Dinner',         cells:{}},
+    {id:'evening',      label:'🌆 Evening',        cells:{
+      d3:'🌃 Nocturnal Façade — Palazzo Nervi Scattolin\nCampo Manin · San Marco 4866 · after dark · FREE\nOnly until June 7 — do not miss\nhttps://universes.art/en/venice-biennale/2026'
+    }},
+    {id:'transport',    label:'🚢 Transportation', cells:{}},
+    {id:'lodging',      label:'🏨 Lodging',        cells:{}},
+    {id:'reservations', label:'📞 Reservations',   cells:{}},
+  ]
+};
+
+let schedData = null;
+let schedSaveTimer = null;
+
+db.ref('vb26_sched').on('value', snap => {
+  const val = snap.val();
+  schedData = val ? JSON.parse(val) : JSON.parse(JSON.stringify(DEFAULT_SCHED));
+  renderSched();
+});
+
+function saveSchedData() {
+  setSyncStatus('saving');
+  clearTimeout(schedSaveTimer);
+  schedSaveTimer = setTimeout(() => {
+    db.ref('vb26_sched').set(JSON.stringify(schedData))
+      .then(() => setSyncStatus('saved'))
+      .catch(() => setSyncStatus('error'));
+  }, 600);
+}
+
+function renderSched() {
+  const wrap = document.getElementById('sched-wrap');
+  if (!wrap || !schedData) return;
+
+  // Save focused cell key so we can restore focus after re-render
+  const focusedKey = document.activeElement?.dataset?.sk || null;
+  const focusedText = document.activeElement?.textContent || '';
+
+  const table = document.createElement('table');
+  table.className = 'sched';
+  table.style.minWidth = (schedData.cols.length * 160 + 130) + 'px';
+
+  // HEADER
+  const thead = document.createElement('thead');
+  const htr = document.createElement('tr');
+
+  // first label cell
+  const tlabel = document.createElement('th');
+  tlabel.className = 'col-label';
+  tlabel.innerHTML = '<div class="th-wrap"><span class="day-name" style="color:var(--ink-soft)">Activity</span></div>';
+  htr.appendChild(tlabel);
+
+  schedData.cols.forEach(col => {
+    const th = document.createElement('th');
+    th.className = 'col-day';
+    const name  = document.createElement('span'); name.className  = 'day-name'; name.contentEditable = 'true'; name.textContent = col.name;  name.dataset.sk = `cols/${col.id}/name`;
+    const sub   = document.createElement('span'); sub.className   = 'day-sub';  sub.contentEditable  = 'true'; sub.textContent  = col.sub;   sub.dataset.sk  = `cols/${col.id}/sub`;
+    const loc   = document.createElement('span'); loc.className   = 'day-loc';  loc.contentEditable  = 'true'; loc.textContent  = col.loc||''; loc.dataset.sk  = `cols/${col.id}/loc`;
+    [name, sub, loc].forEach(el => attachSchedInput(el));
+    const wrap2 = document.createElement('div'); wrap2.className = 'th-wrap';
+    wrap2.append(name, sub, loc);
+    th.appendChild(wrap2);
+    htr.appendChild(th);
+  });
+  thead.appendChild(htr);
+  table.appendChild(thead);
+
+  // BODY
+  const tbody = document.createElement('tbody');
+  schedData.rows.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.className = 'row-' + row.id;
+
+    const rowCss = ROW_COLORS[row.id] || 'transparent';
+
+    // row label
+    const rlTd = document.createElement('td');
+    rlTd.className = 'row-label';
+    rlTd.style.background = rowCss || 'var(--cream-dark)';
+    const rlSpan = document.createElement('span');
+    rlSpan.className = 'rl-inner';
+    rlSpan.contentEditable = 'true';
+    rlSpan.textContent = row.label;
+    rlSpan.dataset.sk = `rows/${row.id}/label`;
+    attachSchedInput(rlSpan);
+    rlTd.appendChild(rlSpan);
+    tr.appendChild(rlTd);
+
+    schedData.cols.forEach(col => {
+      const td = document.createElement('td');
+      td.className = 'cell';
+      td.dataset.sk = `rows/${row.id}/cells/${col.id}`;
+      td.style.background = rowCss;
+      const cellVal = row.cells?.[col.id] || '';
+      // Render: split lines, detect bare URLs, make them links
+      if (cellVal) {
+        const lines = cellVal.split('\n');
+        lines.forEach((line, i) => {
+          const urlMatch = line.match(/^(https?:\/\/[^\s]+)$/);
+          if (urlMatch) {
+            const a = document.createElement('a');
+            a.href = urlMatch[1];
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.textContent = '↗ ' + urlMatch[1].replace(/^https?:\/\//, '');
+            a.style.cssText = 'font-size:10px;color:var(--lagoon);text-decoration:none;display:block;margin-top:2px;';
+            a.addEventListener('mouseenter', () => a.style.textDecoration = 'underline');
+            a.addEventListener('mouseleave', () => a.style.textDecoration = 'none');
+            td.appendChild(a);
+          } else {
+            const span = document.createElement('span');
+            span.style.cssText = i === 0 ? 'font-weight:500;display:block;' : 'display:block;color:var(--ink-soft);font-size:10.5px;';
+            span.textContent = line;
+            td.appendChild(span);
+          }
+          if (i < lines.length - 1 && !line.match(/^https?:\/\//)) {
+            // spacing handled by display:block on spans
+          }
+        });
+        // Make non-URL content editable via click-to-edit pattern
+        td.title = 'Click to edit';
+        td.style.cursor = 'text';
+      } else {
+        td.contentEditable = 'true';
+        td.dataset.ph = 'Add…';
+      }
+      // Always allow editing on focus
+      td.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A') return;
+        td.innerHTML = '';
+        td.contentEditable = 'true';
+        td.textContent = cellVal || '';
+        td.focus();
+        const range = document.createRange();
+        range.selectNodeContents(td);
+        range.collapse(false);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+      });
+      attachSchedInput(td);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+
+  wrap.innerHTML = '';
+  wrap.appendChild(table);
+
+  // restore focus if needed
+  if (focusedKey) {
+    const el = wrap.querySelector(`[data-sk="${focusedKey}"]`);
+    if (el) {
+      el.focus();
+      const range = document.createRange();
+      const sel = window.getSelection();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  }
+}
+
+function attachSchedInput(el) {
+  el.addEventListener('input', () => {
+    const sk = el.dataset.sk;
+    if (!sk || !schedData) return;
+    const parts = sk.split('/');
+    // update local data
+    if (parts[0] === 'cols') {
+      const col = schedData.cols.find(c => c.id === parts[1]);
+      if (col) col[parts[2]] = el.textContent.trim();
+    } else if (parts[0] === 'rows') {
+      const row = schedData.rows.find(r => r.id === parts[1]);
+      if (row) {
+        if (parts[2] === 'label') row.label = el.textContent.trim();
+        else if (parts[2] === 'cells') { if (!row.cells) row.cells = {}; row.cells[parts[3]] = el.textContent.trim(); }
+      }
+    }
+    saveSchedData();
+  });
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); el.blur(); } });
+}
+
+// Add / delete column
+function schedAddCol() {
+  if (!schedData) return;
+  const n = schedData.cols.length;
+  const newId = 'c' + Date.now();
+  schedData.cols.push({ id: newId, name: 'New date', sub: 'Weekday', loc: 'Location' });
+  schedData.rows.forEach(row => { if (!row.cells) row.cells = {}; });
+  saveSchedData();
+  renderSched();
+}
+function schedDelCol() {
+  if (!schedData || schedData.cols.length <= 1) return;
+  if (!confirm('Delete the last column? Any content in it will be lost.')) return;
+  const last = schedData.cols[schedData.cols.length - 1];
+  schedData.cols.pop();
+  schedData.rows.forEach(row => { if (row.cells) delete row.cells[last.id]; });
+  saveSchedData();
+  renderSched();
+}
+
+// Add / delete row
+function schedAddRow() {
+  if (!schedData) return;
+  const label = prompt('New row label (e.g. 🎭 Activity):');
+  if (!label || !label.trim()) return;
+  const newId = 'r' + Date.now();
+  schedData.rows.push({ id: newId, label: label.trim(), cells: {} });
+  saveSchedData();
+  renderSched();
+}
+function schedDelRow() {
+  if (!schedData || schedData.rows.length <= 1) return;
+  const last = schedData.rows[schedData.rows.length - 1];
+  if (!confirm(`Delete row "${last.label}"? Any content in it will be lost.`)) return;
+  schedData.rows.pop();
+  saveSchedData();
+  renderSched();
+}
+
+// ── MEMBERS (drives task assignment dropdowns) ──
+let members = ['Grace'];
+
+db.ref('vb26_members').on('value', snap => {
+  const val = snap.val();
+  members = val ? JSON.parse(val) : ['Grace'];
+  renderMembersBar();
+  renderTasks();
+  renderExpenses();
+  recalc();
+});
+
+function saveMembers() {
+  setSyncStatus('saving');
+  db.ref('vb26_members').set(JSON.stringify(members))
+    .then(() => setSyncStatus('saved'))
+    .catch(() => setSyncStatus('error'));
+}
+
+function renderMembersBar() {
+  // Header crew dropdown
+  const list = document.getElementById('crew-member-list');
+  if (list) {
+    list.innerHTML = '';
+    members.forEach((name, i) => {
+      const initials = name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+      const row = document.createElement('div');
+      row.className = 'crew-member-row';
+      row.innerHTML = `<span class="crew-member-name">
+        <span class="crew-member-avatar">${initials}</span>
+        ${escHtml(name)}
+      </span>
+      <button class="crew-member-del" onclick="removeMember(${i})" title="Remove ${escHtml(name)}">×</button>`;
+      list.appendChild(row);
+    });
+    const label = document.getElementById('crew-label');
+    if (label) label.textContent = members.length === 1 ? '1 member' : `${members.length} crew`;
+  }
+
+  // Tasks tab people bar
+  const taskPills = document.getElementById('members-pills');
+  if (taskPills) {
+    taskPills.innerHTML = '';
+    members.forEach((name, i) => {
+      const pill = document.createElement('span');
+      pill.className = 'member-pill';
+      pill.innerHTML = `${escHtml(name)}<button class="member-pill-del" onclick="removeMember(${i})" title="Remove">×</button>`;
+      taskPills.appendChild(pill);
+    });
+  }
+
+  // Expenses tab people bar
+  const expPills = document.getElementById('exp-members-pills');
+  if (expPills) {
+    expPills.innerHTML = '';
+    members.forEach((name, i) => {
+      const pill = document.createElement('span');
+      pill.className = 'member-pill';
+      pill.innerHTML = `${escHtml(name)}<button class="member-pill-del" onclick="removeMember(${i})" title="Remove">×</button>`;
+      expPills.appendChild(pill);
+    });
+  }
+
+  // Update "Paid by" footer select
+  const np = document.getElementById('np');
+  if (np) np.innerHTML = memberOptions('');
+
+  // Update settle-up subtitle
+  const sub = document.getElementById('settle-subtitle');
+  if (sub) sub.textContent = `Split equally · ${members.join(', ')}`;
+}
+
+function addMemberFromExp() {
+  const inp = document.getElementById('exp-new-member-input');
+  const name = (inp.value || '').trim();
+  if (!name || members.includes(name)) { inp.value = ''; return; }
+  members.push(name);
+  inp.value = '';
+  saveMembers();
+}
+
+function toggleCrewMenu() {
+  const menu = document.getElementById('crew-menu');
+  const btn  = document.getElementById('crew-toggle-btn');
+  const isOpen = menu.classList.contains('show');
+  if (isOpen) {
+    menu.classList.remove('show');
+    btn.classList.remove('open');
+    return;
+  }
+  // Position the fixed menu directly below the button
+  const rect = btn.getBoundingClientRect();
+  menu.style.top  = (rect.bottom + 6) + 'px';
+  menu.style.left = rect.left + 'px';
+  menu.classList.add('show');
+  btn.classList.add('open');
+  setTimeout(() => {
+    document.addEventListener('click', closeCrewMenu, { once: true });
+  }, 0);
+}
+
+function closeCrewMenu(e) {
+  const menu = document.getElementById('crew-menu');
+  const btn  = document.getElementById('crew-toggle-btn');
+  if (!menu?.contains(e.target) && !btn?.contains(e.target)) {
+    menu?.classList.remove('show');
+    btn?.classList.remove('open');
+  }
+}
+
+function addMember() {
+  const inp = document.getElementById('new-member-input');
+  const name = (inp.value || '').trim();
+  if (!name || members.includes(name)) { inp.value = ''; return; }
+  members.push(name);
+  inp.value = '';
+  saveMembers();
+}
+
+function removeMember(idx) {
+  const name = members[idx];
+  if (!confirm(`Remove "${name}"? Their task and expense assignments will be cleared.`)) return;
+  members.splice(idx, 1);
+  taskData.forEach(g => g.tasks.forEach(t => { if (t.who === name) t.who = ''; }));
+  expData.forEach(e => { if (e.payer === name) e.payer = ''; });
+  saveMembers();
+  saveTasks();
+  saveExpenses();
+  renderExpenses();
+}
+
+function memberOptions(selected) {
+  return '<option value="">—</option>' +
+    members.map(m => `<option${m === selected ? ' selected' : ''}>${escHtml(m)}</option>`).join('');
+}
+
+// ── TASKS ──
+let taskData=[];
+const DEFAULT_TASKS=[
+  {id:'g1',name:'Book before you go',tasks:[
+    {id:'t1',text:'Flights — VCE/Marco Polo in Sat May 9 / out Sat May 16',done:false,who:''},
+    {id:'t2',text:'Biennale 3-day pass · €30 early bird → labiennale.org/en/tickets',done:false,who:''},
+    {id:'t3',text:'Osteria alle Testiere dinner reservation — book 3–4 weeks ahead · only 22 covers',done:false,who:''},
+    {id:'t4',text:'Fondazione Giorgio Cini (Isola di San Giorgio) — check reservation requirements',done:false,who:''},
+    {id:'t5',text:'Gallerie dell\'Accademia — book timed entry to skip queues · gallerieaccademia.it',done:false,who:''},
+  ]},
+  {id:'g2',name:'Before departure',tasks:[
+    {id:'t6',text:'Download offline maps — Venice sestieri (Dorsoduro, Cannaregio, Castello, San Polo)',done:false,who:''},
+    {id:'t7',text:'Get Italian eSIM (~€15 · 10GB)',done:false,who:''},
+    {id:'t8',text:'Passport validity check (6 months past May 13)',done:false,who:''},
+    {id:'t9',text:'Notify bank of Italy travel',done:false,who:''},
+    {id:'t10',text:'Save all confirmation numbers offline',done:false,who:''},
+    {id:'t11',text:'Pack smart-casual gala outfit for Biennale inauguration May 9',done:false,who:''},
+  ]},
+  {id:'g3',name:'Venice art & culture',tasks:[
+    {id:'t12',text:'Gallerie dell\'Accademia — Bellini, Titian, Veronese · allow 3+ hours',done:false,who:''},
+    {id:'t13',text:'Scuola Grande di San Rocco — Tintoretto ceiling cycle · unmissable',done:false,who:''},
+    {id:'t14',text:'Doge\'s Palace — maritime republic history + Tintoretto\'s Paradiso',done:false,who:''},
+    {id:'t15',text:'Santa Maria Gloriosa dei Frari — Titian\'s Assumption altarpiece',done:false,who:''},
+    {id:'t16',text:'Fondazione Querini Stampalia — off-the-beaten-path gem',done:false,who:''},
+  ]},
+  {id:'g4',name:'Slow days & lagoon',tasks:[
+    {id:'t17',text:'Torcello — oldest settlement in the lagoon · Byzantine mosaics · take vaporetto Line 12 from Fondamente Nove',done:false,who:''},
+    {id:'t18',text:'Burano — lace-making island · colour-saturated houses · best for late afternoon light',done:false,who:''},
+    {id:'t19',text:'San Giorgio Maggiore — Palladio church + Fondazione Cini (Jean Nouvel Biennale event) · vaporetto Line 2',done:false,who:''},
+    {id:'t20',text:'Giudecca canal walk — quiet, residential, zero tourists · cross via traghetto from Zattere',done:false,who:''},
+  ]}
+];
+
+db.ref('vb26_tasks').on('value',snap=>{
+  taskData=snap.val()?JSON.parse(snap.val()):DEFAULT_TASKS;
+  renderTasks();
+});
+function saveTasks(){setSyncStatus('saving');db.ref('vb26_tasks').set(JSON.stringify(taskData)).then(()=>setSyncStatus('saved')).catch(()=>setSyncStatus('error'));}
+function renderTasks(){
+  const wrap=document.getElementById('tasks-wrap'); if(!wrap) return; wrap.innerHTML='';
+  taskData.forEach(group=>{
+    const div=document.createElement('div'); div.className='task-group';
+    div.innerHTML=`<div class="tg-header"><input class="tg-name" value="${escHtml(group.name)}" placeholder="Section name…" oninput="renameGroup('${group.id}',this.value)"><button class="tg-del" onclick="deleteGroup('${group.id}')">×</button></div><ul class="task-list" id="tl-${group.id}"></ul><div class="add-task-row"><input type="text" placeholder="Add task…" onkeydown="if(event.key==='Enter')addTaskFromInput('${group.id}',this)"><select>${memberOptions('')}</select><button class="btn" onclick="addTaskFromBtn('${group.id}',this)" style="padding:5px 10px;font-size:11px">+ Add</button></div>`;
+    wrap.appendChild(div);
+    const ul=div.querySelector(`#tl-${group.id}`);
+    group.tasks.forEach(task=>{
+      const li=document.createElement('li'); li.className='task-item';
+      li.innerHTML=`<div class="move-btns"><button class="move-btn" onclick="moveTask('${group.id}','${task.id}',-1)">▲</button><button class="move-btn" onclick="moveTask('${group.id}','${task.id}',1)">▼</button></div><input type="checkbox" class="task-cb" ${task.done?'checked':''} onchange="toggleTask('${group.id}','${task.id}',this.checked)"><input class="task-label${task.done?' done':''}" value="${escHtml(task.text)}" oninput="editTask('${group.id}','${task.id}',this.value)"><select class="task-assign" onchange="assignTask('${group.id}','${task.id}',this.value)">${memberOptions(task.who)}</select><button class="task-del" onclick="deleteTask('${group.id}','${task.id}')">×</button>`;
+      ul.appendChild(li);
+    });
+  });
+}
+function fg(gid){return taskData.find(g=>g.id===gid);}
+function ft(gid,tid){const g=fg(gid);return g?g.tasks.find(t=>t.id===tid):null;}
+function renameGroup(gid,v){const g=fg(gid);if(g){g.name=v;debounce('tasks',saveTasks);}}
+function deleteGroup(gid){if(!confirm('Delete section?'))return;const i=taskData.findIndex(g=>g.id===gid);if(i>-1){taskData.splice(i,1);saveTasks();renderTasks();}}
+function toggleTask(gid,tid,c){const t=ft(gid,tid);if(t){t.done=c;saveTasks();renderTasks();}}
+function editTask(gid,tid,v){const t=ft(gid,tid);if(t){t.text=v;debounce('tasks',saveTasks);}}
+function assignTask(gid,tid,v){const t=ft(gid,tid);if(t){t.who=v;saveTasks();}}
+function deleteTask(gid,tid){const g=fg(gid);if(g){g.tasks=g.tasks.filter(t=>t.id!==tid);saveTasks();renderTasks();}}
+function moveTask(gid,tid,dir){const g=fg(gid);if(!g)return;const i=g.tasks.findIndex(t=>t.id===tid),j=i+dir;if(j<0||j>=g.tasks.length)return;[g.tasks[i],g.tasks[j]]=[g.tasks[j],g.tasks[i]];saveTasks();renderTasks();}
+function addTaskFromInput(gid,input){const row=input.closest('.add-task-row');const sel=row.querySelector('select');const text=input.value.trim();if(!text)return;const g=fg(gid);if(g)g.tasks.push({id:uid(),text,done:false,who:sel.value});input.value='';sel.value='';saveTasks();renderTasks();}
+function addTaskFromBtn(gid,btn){const row=btn.closest('.add-task-row');addTaskFromInput(gid,row.querySelector('input'));}
+function addGroup(){const inp=document.getElementById('new-group-name');const name=inp.value.trim();if(!name)return;taskData.push({id:uid(),name,tasks:[]});inp.value='';saveTasks();renderTasks();}
+
+// ── EXPENSES ──
+const CURRENCIES=['€ EUR','$ USD','NTD'],SYMS={'€ EUR':'€','$ USD':'$','NTD':'NTD'},PILLS={'€ EUR':'pill-eur','$ USD':'pill-usd','NTD':'pill-ntd'};
+let expData=[];
+const DEFAULT_EXPENSES=[
+  {id:'e1',item:'Alilaguna water bus from airport',amount:8,currency:'€ EUR',payer:'Grace'},
+  {id:'e2',item:'Cappella degli Scrovegni entry',amount:14,currency:'€ EUR',payer:'Grace'},
+  {id:'e3',item:'Gallerie dell\'Accademia entry',amount:15,currency:'€ EUR',payer:'Grace'},
+  {id:'e4',item:'Dinner — Trattoria da Ignazio',amount:55,currency:'€ EUR',payer:'Grace'},
+  {id:'e5',item:'Biennale catalogue',amount:55,currency:'€ EUR',payer:'Grace'},
+];
+db.ref('vb26_expenses').on('value',snap=>{expData=snap.val()?JSON.parse(snap.val()):DEFAULT_EXPENSES;renderExpenses();recalc();});
+function saveExpenses(){setSyncStatus('saving');db.ref('vb26_expenses').set(JSON.stringify(expData)).then(()=>setSyncStatus('saved')).catch(()=>setSyncStatus('error'));}
+function renderExpenses(){
+  const tbody=document.getElementById('exp-body'); if(!tbody) return; tbody.innerHTML='';
+  expData.forEach(row=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><input type="text" value="${escHtml(row.item)}" oninput="updateExp('${row.id}','item',this.value)"></td><td><input type="number" value="${row.amount}" style="text-align:right" oninput="updateExp('${row.id}','amount',this.value)"></td><td><select onchange="updateExp('${row.id}','currency',this.value)"><option${row.currency==='€ EUR'?' selected':''}>€ EUR</option><option${row.currency==='$ USD'?' selected':''}>$ USD</option><option${row.currency==='NTD'?' selected':''}>NTD</option></select></td><td><select onchange="updateExp('${row.id}','payer',this.value)">${memberOptions(row.payer)}</select></td><td><button class="del-btn" onclick="delExp('${row.id}')">×</button></td>`;
+    tbody.appendChild(tr);
+  });
+  recalc();
+}
+function updateExp(id,field,val){const row=expData.find(r=>r.id===id);if(!row)return;row[field]=field==='amount'?parseFloat(val)||0:val;debounce('expenses',saveExpenses);recalc();}
+function addExp(){const item=document.getElementById('ni').value.trim(),amt=document.getElementById('na').value,curr=document.getElementById('nc').value,payer=document.getElementById('np').value;if(!item)return;expData.push({id:uid(),item,amount:parseFloat(amt)||0,currency:curr,payer});document.getElementById('ni').value='';document.getElementById('na').value='';saveExpenses();renderExpenses();}
+function delExp(id){expData=expData.filter(r=>r.id!==id);saveExpenses();renderExpenses();}
+function getRate(from,to){if(from===to)return 1;const v=id=>parseFloat(document.getElementById(id)?.value)||1;if(from==='$ USD'&&to==='€ EUR')return v('r-usd-eur');if(from==='€ EUR'&&to==='$ USD')return v('r-eur-usd');if(from==='NTD'&&to==='€ EUR')return v('r-ntd-eur');if(from==='€ EUR'&&to==='NTD')return v('r-eur-ntd');if(from==='$ USD'&&to==='NTD')return v('r-usd-ntd');if(from==='NTD'&&to==='$ USD')return v('r-ntd-usd');return 1;}
+function recalc(){
+  const rc=document.getElementById('result-currency'); if(!rc) return;
+  const rcv=rc.value;
+  document.getElementById('rate-inputs').style.display=rcv!=='native'?'flex':'none';
+  const rows=expData.filter(r=>r.payer&&r.payer!=='—'&&r.amount>0),paid={},total={};
+  members.forEach(p=>{paid[p]={};CURRENCIES.forEach(c=>paid[p][c]=0);});
+  CURRENCIES.forEach(c=>total[c]=0);
+  rows.forEach(r=>{if(paid[r.payer]){paid[r.payer][r.currency]=(paid[r.payer][r.currency]||0)+r.amount;total[r.currency]=(total[r.currency]||0)+r.amount;}});
+  const bd=document.getElementById('breakdown'); if(!bd) return; bd.innerHTML='';
+  members.forEach(p=>{const card=document.createElement('div');card.className='person-card';let pl=CURRENCIES.filter(c=>paid[p]&&paid[p][c]>0).map(c=>`<div class="pc-row"><span class="pc-label">Paid (${SYMS[c]})</span><span class="pc-val">${SYMS[c]}${paid[p][c].toFixed(c==='NTD'?0:2)}</span></div>`).join('');if(!pl)pl=`<div class="pc-row"><span class="pc-label">Paid</span><span class="pc-val">—</span></div>`;let fl=CURRENCIES.filter(c=>total[c]>0).map(c=>`<div class="pc-row"><span class="pc-label">Fair share (${SYMS[c]})</span><span class="pc-val">${SYMS[c]}${(total[c]/members.length).toFixed(c==='NTD'?0:2)}</span></div>`).join('');card.innerHTML=`<div class="pc-head">${p}</div><div class="pc-body">${pl}${fl}</div>`;bd.appendChild(card);});
+  let txns=[];
+  if(rcv==='native'){
+    CURRENCIES.forEach(c=>{
+      if(!total[c])return;
+      const fair=total[c]/members.length;
+      const pos=[],neg=[];
+      members.forEach(p=>{const net=(paid[p]?.[c]||0)-fair;if(net>0.005)pos.push({p,net});else if(net<-0.005)neg.push({p,net:Math.abs(net)});});
+      neg.forEach(debtor=>{
+        let owed=debtor.net;
+        pos.forEach(creditor=>{
+          if(owed<=0||creditor.net<=0)return;
+          const amt=Math.min(owed,creditor.net);
+          txns.push({from:debtor.p,to:creditor.p,amount:amt,currency:c});
+          owed-=amt; creditor.net-=amt;
+        });
+      });
+    });
+  } else {
+    const tgt=CURRENCIES.find(c=>c.startsWith(rcv==='EUR'?'€':rcv==='USD'?'$':'N'));
+    const net={};members.forEach(p=>net[p]=0);
+    CURRENCIES.forEach(c=>{if(!total[c])return;const fair=total[c]/members.length;members.forEach(p=>{net[p]+=(( paid[p]?.[c]||0)-fair)*getRate(c,tgt);});});
+    const pos=[],neg=[];
+    members.forEach(p=>{if(net[p]>0.005)pos.push({p,net:net[p]});else if(net[p]<-0.005)neg.push({p,net:Math.abs(net[p])});});
+    neg.forEach(debtor=>{
+      let owed=debtor.net;
+      pos.forEach(creditor=>{
+        if(owed<=0||creditor.net<=0)return;
+        const amt=Math.min(owed,creditor.net);
+        txns.push({from:debtor.p,to:creditor.p,amount:amt,currency:tgt});
+        owed-=amt; creditor.net-=amt;
+      });
+    });
+  }
+  const sr=document.getElementById('settle-result'); if(!sr) return;
+  if(!txns.length){sr.innerHTML='<div class="no-settle">All square — no one owes anything! 🎉</div>';return;}
+  sr.innerHTML=txns.map(t=>`<div class="settle-row"><span class="s-from">${t.from}</span><span class="s-arrow">→ owes →</span><span class="s-to">${t.to}</span><span class="s-pill ${PILLS[t.currency]||'pill-eur'}">${SYMS[t.currency]}${t.amount.toFixed(t.currency==='NTD'?0:2)}</span></div>`).join('');
+}
+
+// ── VISION BOARD ──
+const DEFAULT_PINS=[
+  // FOOD & BACARI
+  {id:'p1', tag:'food',     emoji:'🥂', bg:'#E3F0F3', title:'All\'Arco',                         loc:'📍 San Polo · near Rialto',                      note:'The definitive Venetian bacaro — tiny, perfect cicchetti, local crowd only',                                                                          url:''},
+  {id:'p2', tag:'food',     emoji:'🍷', bg:'#E6F1FB', title:'Cantina Do Mori',                   loc:'📍 San Polo',                                    note:'Venice\'s oldest bacaro (1462) · ombra di vino + baccalà mantecato',                                                                                  url:''},
+  {id:'p3', tag:'food',     emoji:'🐟', bg:'#EAF3DE', title:'Trattoria da Ignazio',              loc:'📍 San Polo',                                    note:'No-frills local favourite · sarde in saor, risotto al nero di seppia',                                                                                url:''},
+  {id:'p4', tag:'food',     emoji:'⭐', bg:'#FAEEDA', title:'Osteria alle Testiere',             loc:'📍 Castello',                                    note:'Only 22 covers · best seafood in Venice · book weeks ahead',                                                                                          url:''},
+  {id:'p5', tag:'food',     emoji:'🌿', bg:'#E3F0F3', title:'Trattoria Corte Sconta',            loc:'📍 Castello',                                    note:'Hidden courtyard · legendary crudo & lagoon fish · locals\' secret',                                                                                  url:''},
+  {id:'p6', tag:'food',     emoji:'☕', bg:'#F4F7F7', title:'Caffè Florian',                     loc:'📍 Piazza San Marco',                            note:'Founded 1720 · oldest café in Europe · splurge once',                                                                                                url:'https://caffeflorian.com'},
+  // WINE BARS
+  {id:'p7', tag:'wine',     emoji:'🍾', bg:'#FBEAF0', title:'Enoteca Mascareta',                 loc:'📍 Castello',                                    note:'Mauro Lorenzon\'s legendary cellar · rare Venetian wines · open late',                                                                                url:''},
+  {id:'p8', tag:'wine',     emoji:'🥃', bg:'#EEEDFE', title:'Vino Vero',                         loc:'📍 Cannaregio',                                  note:'Natural wine bar · serious list · outdoor canalside seating',                                                                                        url:''},
+  {id:'p9', tag:'wine',     emoji:'🍷', bg:'#E3F0F3', title:'El Sbeton',                         loc:'📍 Cannaregio',                                  note:'No-sign bacaro · neighbourhood regulars · Veneto DOC wines only',                                                                                    url:''},
+  // ART & SIGHTS
+  {id:'p10',tag:'activity', emoji:'🎨', bg:'#E6F1FB', title:'Scuola Grande di San Rocco',        loc:'📍 San Polo',                                    note:'Tintoretto\'s Sistine Chapel · ceiling cycle 1564–1588 · bring a mirror',                                                                            url:'https://scuolagrandesanrocco.org'},
+  {id:'p11',tag:'activity', emoji:'🏛️', bg:'#EAF3DE', title:'Gallerie dell\'Accademia',          loc:'📍 Dorsoduro',                                   note:'Bellini · Titian · Veronese · Giorgione · allow 3+ hours minimum',                                                                                   url:'https://gallerieaccademia.it'},
+  {id:'p12',tag:'activity', emoji:'👑', bg:'#FAEEDA', title:'Palazzo Ducale',                    loc:'📍 San Marco',                                   note:'Tintoretto\'s Paradiso (largest oil painting in world) · maritime republic history',                                                                   url:'https://palazzoducale.visitmuve.it'},
+  {id:'p13',tag:'activity', emoji:'⛪', bg:'#FBEAF0', title:'Santa Maria dei Frari',             loc:'📍 San Polo',                                    note:'Titian\'s Assumption (1518) · Bellini\'s triptych · Venice\'s greatest church interior',                                                              url:''},
+  {id:'p14',tag:'activity', emoji:'💎', bg:'#EEEDFE', title:'Fondazione Querini Stampalia',      loc:'📍 Castello',                                    note:'Off-radar gem · Carlo Scarpa interiors · small but exquisite collection',                                                                              url:'https://querinistampalia.org'},
+  // BIENNALE — TICKETS & MAIN VENUES
+  {id:'p15',tag:'biennale', emoji:'🎫', bg:'#D6EEF4', title:'Biennale 3-Day Pass',               loc:'📍 labiennale.org/en/tickets',                   note:'€30 early bird · 3 consecutive days · covers Giardini + Arsenale · buy online before end of March or price rises to €40',                           url:'https://www.labiennale.org/en/tickets'},
+  {id:'p16',tag:'biennale', emoji:'🌿', bg:'#E3F0F3', title:'Biennale — Giardini',               loc:'📍 Castello · Viale Trento 1260',                note:'National pavilions · arrive after 2pm midweek for quieter experience · allow 3 hrs · open 11am–7pm',                                               url:'https://www.labiennale.org/en/art/2026'},
+  {id:'p17',tag:'biennale', emoji:'⚓', bg:'#E6F1FB', title:'Biennale — Arsenale',               loc:'📍 Castello · Campo della Tana',                 note:'Vast naval warehouse · main international exhibition · do this first · allow a full afternoon · Fri/Sat open until 8pm',                            url:'https://www.labiennale.org/en/art/2026'},
+  // PAVILIONS — YOUR SELECTIONS
+  {id:'p31',tag:'biennale', emoji:'🌲', bg:'#D6EEF4', title:'Nordic Pavilion — Giardini',        loc:'📍 Giardini · Castello',                         note:'Klara Kristalova · Benjamin Orlow · Tori Wrånes · Sverre Fehn\'s 1962 building · afternoon light extraordinary · 3 min from Italian Pavilion · May 10',url:'https://www.labiennale.org/en/art/2026'},
+  {id:'p32',tag:'biennale', emoji:'🇮🇹', bg:'#FAE8E4', title:'Italian Pavilion — Arsenale',      loc:'📍 Arsenale · Corderie · Castello',              note:'Chiara Camoni · intimacy in a cavernous space · included in Biennale ticket · combine with Nordic on May 10 afternoon',                             url:'https://www.labiennale.org/en/art/2026'},
+  {id:'p33',tag:'biennale', emoji:'🇹🇼', bg:'#EAF3DE', title:'Taiwan — Palazzo delle Prigioni',  loc:'📍 Riva degli Schiavoni 4209 · adj. Palazzo Ducale',note:'Li Yi-Fan · Screen Melancholy · film & game-engine work · FREE · Taiwan\'s permanent venue since 1995 · May 11 afternoon',                        url:'https://www.taipeifineartsmuseum.com'},
+  {id:'p22',tag:'biennale', emoji:'🇩🇪', bg:'#F2EAE6', title:'German Pavilion — Giardini',       loc:'📍 Giardini · included in ticket',               note:'Henrike Naumann & Sung Tieu · systems of social and political order · one of Naumann\'s final major projects',                                       url:'https://www.labiennale.org/en/art/2026'},
+  {id:'p24',tag:'biennale', emoji:'🇮🇪', bg:'#E3F0F3', title:'Irish Pavilion — Giardini',        loc:'📍 Giardini · included in ticket',               note:'Isabel Nolan · cosmology and mortality · quiet and contemplative · curated by Georgina Jackson',                                                     url:'https://www.labiennale.org/en/art/2026'},
+  {id:'p25',tag:'biennale', emoji:'🇦🇷', bg:'#EEEDFE', title:'Argentine Pavilion — Giardini',    loc:'📍 Giardini · included in ticket',               note:'Matías Duville · entire floor covered in charcoal and salt · you walk across it · visceral',                                                        url:'https://www.labiennale.org/en/art/2026'},
+  // COLLATERAL EVENTS
+  {id:'p34',tag:'biennale', emoji:'🇺🇦', bg:'#E6F1FB', title:'Still Joy — from Ukraine',          loc:'📍 Palazzo Contarini-Polignac · Dorsoduro 874', note:'Pinchuk Art Centre · FREE · May 9–Aug 1 only · 11am–6pm · Dorsoduro waterfront · May 11 afternoon · cluster with Nalini Malani nearby',              url:'https://pinchukartcentre.org'},
+  {id:'p35',tag:'biennale', emoji:'🌃', bg:'#1C2B30', title:'Nocturnal Façade Projection',        loc:'📍 Campo Manin · San Marco 4866',                note:'Moving image on palazzo façade · FREE · only May 9–Jun 7 · after dark · May 12 evening after Cannaregio bacari · do not miss',                      url:'https://universes.art/en/venice-biennale/2026'},
+  {id:'p26',tag:'biennale', emoji:'🎵', bg:'#FAE8E4', title:'Holy See — Sound Installation',      loc:'📍 Cannaregio · Giardino Carmelitani',           note:'FREE · curated by Hans Ulrich Obrist · Soundwalk Collective · haunting audio in two Cannaregio gardens · combine with May 12 afternoon',           url:'https://www.labiennale.org/en/art/2026'},
+  {id:'p28',tag:'biennale', emoji:'📚', bg:'#E3F0F3', title:'Biblioteca Nazionale Marciana',      loc:'📍 Piazza San Marco 7',                          note:'Collateral event inside Venice\'s most magnificent library · full run May 9–Nov 22 · check admission on arrival',                                    url:'https://universes.art/en/venice-biennale/2026'},
+  {id:'p29',tag:'biennale', emoji:'🏝️', bg:'#E6F1FB', title:'Fondazione Giorgio Cini — Nouvel',  loc:'📍 Isola di San Giorgio Maggiore',               note:'Jean Nouvel · Fondation Cartier design concepts · Palladio island · vaporetto Line 2 from San Zaccaria · unmissable setting',                       url:'https://www.cini.it'},
+  // SLOW DAYS & LAGOON
+  {id:'p18',tag:'activity', emoji:'🏝️', bg:'#E3F0F3', title:'Torcello — San Fosca',               loc:'📍 Lagoon · vaporetto Line 12',                  note:'Byzantine mosaic Last Judgement · oldest church in Venice · utterly quiet · go early',                                                                   url:''},
+  {id:'p19',tag:'activity', emoji:'🌈', bg:'#FBEAF0', title:'Burano',                               loc:'📍 Lagoon · vaporetto Line 12',                  note:'Lace-making island · saturated colour facades · best in late afternoon light · less crowded on weekdays',                                               url:''},
+  {id:'p20',tag:'activity', emoji:'⛵', bg:'#D6EEF4', title:'Giudecca canal walk',                  loc:'📍 Giudecca · traghetto from Zattere',           note:'Residential · zero tourists · Palladio\'s Il Redentore · walk the entire length · perfect slow afternoon',                                               url:''},
+];
+let pinData=[];
+db.ref('vb26_pins').on('value',snap=>{pinData=snap.val()?JSON.parse(snap.val()):DEFAULT_PINS;renderBoard();});
+function savePins(){setSyncStatus('saving');db.ref('vb26_pins').set(JSON.stringify(pinData)).then(()=>setSyncStatus('saved')).catch(()=>setSyncStatus('error'));}
+function renderBoard(){
+  const board=document.getElementById('board');
+  const activeTag=document.querySelector('.tag-pill.active')?.dataset?.tag||'all';
+  board.innerHTML='';
+  pinData.forEach(pin=>{
+    const card=document.createElement('div'); card.className='pin-card'; card.dataset.tag=pin.tag; card.dataset.id=pin.id;
+    card.style.display=(activeTag==='all'||activeTag===pin.tag)?'':'none';
+    const hasUrl=pin.url&&pin.url!=='#';
+    card.innerHTML=`<a class="pin-card-link" href="${hasUrl?escHtml(pin.url):'#'}" target="_blank" title="${escHtml(pin.title)}"></a><div class="pin-emoji" style="background:${pin.bg}">${pin.emoji}</div><div class="pin-body"><div class="pin-title">${escHtml(pin.title)}</div>${pin.loc?`<div class="pin-loc">${pin.loc}</div>`:''} ${pin.note?`<div class="pin-note">${escHtml(pin.note)}</div>`:''}<div class="pin-tag">${pin.tag}</div>${hasUrl?`<a class="pin-link" href="${escHtml(pin.url)}" target="_blank">${pin.url.replace(/^https?:\/\//,'').slice(0,30)} ↗</a>`:`<span class="pin-link" style="color:var(--ink-ghost);font-style:italic;">no link yet</span><button class="pin-edit-url" onclick="editCardUrl('${pin.id}')">+ add URL</button>`}</div>`;
+    board.appendChild(card);
+  });
+}
+function filterTag(tag,el){document.querySelectorAll('.tag-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');el.dataset.tag=tag;document.querySelectorAll('.pin-card').forEach(c=>{c.style.display=(tag==='all'||c.dataset.tag===tag)?'':'none';});}
+function addPin(){const url=document.getElementById('pin-url').value.trim(),title=document.getElementById('pin-title').value.trim()||url,tag=document.getElementById('pin-tag-in').value.trim()||'activity';if(!url&&!title)return;pinData.push({id:uid(),tag,emoji:'🔗',bg:'var(--cream-dark)',title,loc:'',note:'',url:url||''});document.getElementById('pin-url').value='';document.getElementById('pin-title').value='';document.getElementById('pin-tag-in').value='';savePins();renderBoard();}
+function editCardUrl(id){const pin=pinData.find(p=>p.id===id);if(!pin)return;const url=prompt('Enter the full URL (e.g. https://example.com):',pin.url||'');if(url===null)return;pin.url=url.trim();savePins();renderBoard();}
+
+// ── MAP PINS ──
+const DEFAULT_MAP={
+  venice:[
+    {id:'mp1', type:'mp-sight',name:'Scuola Grande di San Rocco',     sub:'San Polo · Tintoretto ceiling cycle 1564–1588'},
+    {id:'mp2', type:'mp-sight',name:'Gallerie dell\'Accademia',        sub:'Dorsoduro · Bellini, Titian, Veronese, Giorgione'},
+    {id:'mp3', type:'mp-sight',name:'Palazzo Ducale',                  sub:'San Marco · Tintoretto\'s Paradiso · maritime history'},
+    {id:'mp4', type:'mp-sight',name:'Santa Maria dei Frari',           sub:'San Polo · Titian\'s Assumption 1518 · Bellini triptych'},
+    {id:'mp5', type:'mp-sight',name:'Fondazione Querini Stampalia',    sub:'Castello · Carlo Scarpa interiors · off-radar gem'},
+    {id:'mp6', type:'mp-food', name:'All\'Arco',                       sub:'San Polo · finest cicchetti in Venice · go at noon'},
+    {id:'mp7', type:'mp-food', name:'Cantina Do Mori',                 sub:'San Polo · oldest bacaro 1462 · shadow wines'},
+    {id:'mp8', type:'mp-food', name:'Osteria alle Testiere',           sub:'Castello · 22 covers · best seafood · book weeks ahead'},
+    {id:'mp9', type:'mp-food', name:'Trattoria Corte Sconta',          sub:'Castello · hidden courtyard · legendary crudo'},
+    {id:'mp10',type:'mp-wine', name:'Enoteca Mascareta',               sub:'Castello · Mauro Lorenzon · rare Venetian wines · open late'},
+    {id:'mp11',type:'mp-wine', name:'Vino Vero',                       sub:'Cannaregio · natural wine · canalside terrace'},
+    {id:'mp12',type:'mp-wine', name:'El Sbeton',                       sub:'Cannaregio · no-sign bacaro · locals only · Veneto DOC'},
+    {id:'mp13',type:'mp-other',name:'Biennale — Giardini',             sub:'Castello · national pavilions · arrive after 2pm midweek'},
+    {id:'mp14',type:'mp-other',name:'Biennale — Arsenale',             sub:'Castello · main international exhibition · do this first'},
+    {id:'mp15',type:'mp-other',name:'Fondazione Giorgio Cini',         sub:'Isola di San Giorgio · vaporetto Line 2 · Jean Nouvel event'},
+  ],
+};
+let mapPins={venice:[]};
+['venice'].forEach(map=>{
+  db.ref('vb26_mapPins/'+map).on('value',snap=>{mapPins[map]=snap.val()?JSON.parse(snap.val()):DEFAULT_MAP[map];renderMapPins(map);});
+});
+function saveMapPins(map){setSyncStatus('saving');db.ref('vb26_mapPins/'+map).set(JSON.stringify(mapPins[map])).then(()=>setSyncStatus('saved')).catch(()=>setSyncStatus('error'));}
+function renderMapPins(map){const list=document.getElementById(map+'-map-pins');if(!list)return;list.innerHTML='';mapPins[map].forEach(pin=>{const item=document.createElement('div');item.className='map-pin-item';item.innerHTML=`<div class="mp-dot ${pin.type}"></div><div class="mp-text"><div class="mp-name">${escHtml(pin.name)}</div>${pin.sub?`<div class="mp-sub">${escHtml(pin.sub)}</div>`:''}</div><button class="mp-del" onclick="delMapPin('${map}','${pin.id}')">×</button>`;list.appendChild(item);});}
+function addMapPin(map,nameId,subId,typeId){const name=document.getElementById(nameId).value.trim(),sub=document.getElementById(subId).value.trim(),type=document.getElementById(typeId).value;if(!name)return;mapPins[map].push({id:uid(),type,name,sub});document.getElementById(nameId).value='';document.getElementById(subId).value='';saveMapPins(map);renderMapPins(map);}
+function delMapPin(map,id){mapPins[map]=mapPins[map].filter(p=>p.id!==id);saveMapPins(map);renderMapPins(map);}
+
+// ── MY MAPS URL PERSISTENCE ──
+['venice'].forEach(map => {
+  db.ref('vb26_myMapsUrl/' + map).on('value', snap => {
+    const url = snap.val();
+    if (url) activateMap(map, url);
+  });
+});
+
+function saveMapUrl(map) {
+  const input = document.getElementById(map + '-map-url');
+  const url = (input ? input.value : '').trim();
+  if (!url) return;
+  setSyncStatus('saving');
+  db.ref('vb26_myMapsUrl/' + map).set(url)
+    .then(() => { setSyncStatus('saved'); activateMap(map, url); })
+    .catch(() => setSyncStatus('error'));
+}
+
+function activateMap(map, url) {
+  const setup  = document.getElementById(map + '-setup');
+  const layout = document.getElementById(map + '-map-layout');
+  const iframe = document.getElementById(map + '-iframe');
+  const openLink = document.getElementById(map + '-open-link');
+  if (!setup || !layout || !iframe) return;
+  // Extract the viewable My Maps URL for the "open" link
+  const viewUrl = url.replace('embed', 'view');
+  iframe.src = url;
+  if (openLink) openLink.href = viewUrl;
+  setup.style.display  = 'none';
+  layout.style.display = 'flex';
+}
+
+function changeMapUrl(map) {
+  const setup  = document.getElementById(map + '-setup');
+  const layout = document.getElementById(map + '-map-layout');
+  if (setup)  setup.style.display  = 'flex';
+  if (layout) layout.style.display = 'none';
+}
+
+function previewMap(map) {
+  // Live preview as user types (optional feel-good)
+  const input = document.getElementById(map + '-map-url');
+  const iframe = document.getElementById(map + '-iframe');
+  if (input && iframe && input.value.includes('google.com/maps')) {
+    iframe.src = input.value.trim();
+  }
+}
+
+function showTab(id,el){document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('panel-'+id).classList.add('active');}
+let _tabSeq=0;
+function addTab(){const name=prompt('Tab name:');if(!name||!name.trim())return;_tabSeq++;const id='custom'+_tabSeq;const bar=document.getElementById('tabs-bar');const addBtn=bar.querySelector('.tab-add');const btn=document.createElement('button');btn.className='tab-btn';btn.textContent=name.trim();btn.onclick=function(){showTab(id,this);};bar.insertBefore(btn,addBtn);const panel=document.createElement('div');panel.className='panel';panel.id='panel-'+id;panel.innerHTML=`<div contenteditable style="min-height:120px;font-size:14px;color:var(--ink);outline:none;padding:4px;">${escHtml(name.trim())}</div>`;document.querySelector('.main').appendChild(panel);showTab(id,btn);}
+
+// ── AI ──
+async function sendAI(){
+  const input=document.getElementById('ai-input'),text=input.value.trim();
+  if(!text)return;
+  const respEl=document.getElementById('ai-response'),respText=document.getElementById('ai-response-text');
+  respText.textContent='Thinking…';respEl.classList.add('show');input.value='';
+  if(ANTHROPIC_API_KEY==='paste-your-key-here'){respText.textContent='⚠️ Add your Anthropic API key at the top of the script to enable AI commands.';return;}
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':ANTHROPIC_API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:'You are a discerning travel concierge for a Venice Biennale 2026 planner. The traveller attends the Biennale (theme: Stranieri Ovunque — Foreigners Everywhere) with deep interests in Renaissance painting (Bellini, Titian, Tintoretto, Veronese), Venetian architecture (Scarpa, Palladio), bacari and cicchetti culture, and serious wine bars. They travel slowly and deliberately — never rushing, never tourist-trapping. They want specific, opinionated recommendations. Be concise, direct, and curatorial. Name exact places, exact sestieri, exact context. Never suggest Harry\'s Bar, the Rialto Bridge for photos, or gondola rides.',messages:[{role:'user',content:text}]})});
+    const data=await res.json();
+    respText.textContent=data.content?.[0]?.text||'No response.';
+  }catch(e){respText.textContent='Error contacting Claude. Check your API key and network.';}
+}
+</script>
+</body>
+</html>
